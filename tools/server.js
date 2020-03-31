@@ -56,6 +56,6 @@ if (environment !== "production") {
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-server.listen(process.env.PORT || 8080);
+server.listen(process.env.PORT || 2324);
 /* eslint-disable no-console */
 console.log(chalkSuccess('Express server is listening on port: ' + server.address().port));
