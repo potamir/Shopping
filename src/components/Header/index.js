@@ -73,7 +73,7 @@ class Header extends Component {
           {mq.matches ? (
             <Link
               onlyActiveOnIndex={true}
-              key={4}
+              key={5}
               to="/cart"
               onClick={async () => {
                 const loggedIn = await JSON.parse(
@@ -93,7 +93,7 @@ class Header extends Component {
           {mq.matches ? (
             <Link
               onlyActiveOnIndex={true}
-              key={5}
+              key={6}
               to="/login"
               activeClassName="activeNavLink"
               className="navLink"
@@ -106,7 +106,7 @@ class Header extends Component {
           <div className="innerMenu innerMenuDirection2">
             <Link
               onlyActiveOnIndex={true}
-              key={4}
+              key={5}
               to="/cart"
               activeClassName="activeNavLink"
               className="cartMenu navLink"
@@ -191,7 +191,7 @@ class Header extends Component {
           <Link onlyActiveOnIndex={true} to="/" className="logo">
             COUTURE HIJAB
           </Link>
-          {!mq.matches && localStorage.getItem("userData") ? (
+          {!mq.matches ? (
             <Link
               onlyActiveOnIndex={true}
               key={4}
@@ -199,19 +199,9 @@ class Header extends Component {
               activeClassName="activeNavLink"
               className="navLink login"
             >
-              Log Out
-            </Link>
-          ) : (
-            <Link
-              onlyActiveOnIndex={true}
-              key={4}
-              to="/login"
-              activeClassName="activeNavLink"
-              className="navLink login"
-            >
               Login
             </Link>
-          )}
+          ) : null}
         </div>
         <div className={"header_logodiv"}>
           <img

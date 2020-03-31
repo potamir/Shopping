@@ -31,6 +31,7 @@ class ItemNew extends Component {
     if (this.state.flipped) flipped = "img2";
     const _props = this.props;
     const newItem = {
+      item_id: _props.items.item_id,
       name: _props.items.name,
       price: _props.items.price,
       description: _props.items.description

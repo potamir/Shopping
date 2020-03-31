@@ -24,6 +24,7 @@ class Cart extends Component {
   }
 
   async getItem() {
+    console.log('aweae',this.state.items);
     // const data = this.state;
     await fetch(`http://${address}/items_get_id`, {
       method: "POST",
@@ -37,6 +38,7 @@ class Cart extends Component {
     })
       .then(response => response.json())
       .then(async responseJson => {
+        console.log("res", responseJson);
         this.setState({ data: responseJson });
       });
   }
