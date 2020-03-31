@@ -39,7 +39,7 @@ class ItemCarousel extends Component {
           return (
             <div key={index} className={"img_div"}>
               <img className={"item_caro"} src={value.carousel_img} />
-              <p className="legend">{value.carousel_text}</p>
+              {/*<p className="legend">{value.carousel_text}</p> */}
             </div>
           );
         })}

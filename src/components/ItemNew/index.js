@@ -34,7 +34,8 @@ class ItemNew extends Component {
       item_id: _props.items.item_id,
       name: _props.items.name,
       price: _props.items.price,
-      description: _props.items.description
+      description: _props.items.description,
+      img: _props.items.img1
     };
     return (
       <div className="itemNew">

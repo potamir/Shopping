@@ -4,6 +4,7 @@ import { browserHistory } from "react-router";
 import "./styles.sass";
 import ImageUploader from "react-images-upload";
 import * as constant from "../constant.js";
+import imageCompression from "browser-image-compression";
 
 const fileSize = 10242880;
 const address = constant.ENDPOINT;
@@ -53,7 +54,23 @@ class AdminMan extends Component {
   }
 
   async onDrop(picture, url, index) {
-    this.state.pictures.splice(index, 1, url);
+    let newImg = "";
+    const options = {
+      maxSizeMB: 0.05,
+      maxWidthOrHeight: 640,
+      useWebWorker: true
+    };
+    try {
+      const compressedFile = await imageCompression(picture[0], options);
+      try {
+        newImg = await imageCompression.getDataUrlFromFile(compressedFile);
+        this.state.pictures.splice(index, 1, newImg);
+      } catch (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
     await this.setState({ preview: false });
     this.setState({
       preview: true

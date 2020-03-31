@@ -59,7 +59,7 @@ class ItemPage extends Component {
       <div className="itemPageWrapper" ref={ref => (this.itemPageRef = ref)}>
         {this.getModal()}
         <div className="itemImgWrapper">
-          <img src={null} className="itemImg" />
+          <img src={passedData.item.img} className="itemImg" />
         </div>
         <div className="itemInfoWrapper">
           <Link

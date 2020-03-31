@@ -22,7 +22,7 @@ class Popup extends Component {
             <form>
               <input readOnly className="modalInp" />
               <div className="modalButton">
-                <button className="modalBtn yesBtn" onClick={_props.yesCommand}>
+                <button type="button" className="modalBtn yesBtn" onClick={_props.yesCommand}>
                   Yes
                 </button>
                 <button type="button" className="modalBtn cclBtn" onClick={_props.closeModal}>

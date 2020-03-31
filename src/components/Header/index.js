@@ -205,7 +205,7 @@ class Header extends Component {
         <div className={"header_logodiv"}>
           <img
             className={"header_logo"}
-            src="ftp://45.130.228.116/domains/couturehijaab.id/images/example.jpg"
+            src={require("../../assets/images/logo.png")}
           />
         </div>
         {this.state.menuActive ? this.menuButton : ""}

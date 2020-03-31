@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import "./styles.sass";
 import ImageUploader from "react-images-upload";
 import * as constant from "../constant.js";
+import imageCompression from "browser-image-compression";
 
 const fileSize = 10242880;
 const address = constant.ENDPOINT;
@@ -11,10 +12,6 @@ class ManagerMain extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      carouselText1: [],
-      carouselText2: [],
-      carouselText3: [],
-      carouselText4: [],
       contact: [],
       about: [],
       help: [],
@@ -34,8 +31,24 @@ class ManagerMain extends Component {
     await this.getItem();
   }
 
-  async onDrop(_state, url, index) {
-    this.state[_state].splice(index, 1, url);
+  async onDrop(picture, _state, url, index) {
+    let newImg = "";
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1024,
+      useWebWorker: true
+    };
+    try {
+      const compressedFile = await imageCompression(picture[0], options);
+      try {
+        newImg = await imageCompression.getDataUrlFromFile(compressedFile);
+        this.state[_state].splice(index, 1, newImg);
+      } catch (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
     await this.setState({ preview: false });
     this.setState({
       preview: true
@@ -76,10 +89,6 @@ class ManagerMain extends Component {
           [responseJson[0].tag4_img]
         );
         await this.setState({
-          carouselText1: [responseJson[0].carousel_text1],
-          carouselText2: [responseJson[0].carousel_text2],
-          carouselText3: [responseJson[0].carousel_text3],
-          carouselText4: [responseJson[0].carousel_text4],
           contact: [responseJson[0].contact_text],
           about: [responseJson[0].about_text],
           help: [responseJson[0].help_text],
@@ -101,10 +110,6 @@ class ManagerMain extends Component {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        carouselText1: data.carouselText1,
-        carouselText2: data.carouselText2,
-        carouselText3: data.carouselText3,
-        carouselText4: data.carouselText4,
         contact: data.contact,
         about: data.about,
         help: data.help,
@@ -136,41 +141,56 @@ class ManagerMain extends Component {
     return (
       <div className="AdminMain">
         <h1 className="AdminHeader">Change Main Menu Text and Image</h1>
-        <div className="NameField">
-          <div className="Name MainManName">
-            <p>Carousel Text 1 :</p>
-            <input
-              placeholder="Text on Carousel"
-              onChange={e => this.inputChangeHandler(e, "carouselText1")}
-              value={this.state.carouselText1}
+
+        <div>
+          <p className="imgUploaderTitle">Carousel Images</p>
+          <div className="imgUploaderGroup">
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 0)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
             />
-          </div>
-          <div className="Name MainManName">
-            <p>Carousel Text 2 :</p>
-            <input
-              placeholder="Text on Carousel"
-              onChange={e => this.inputChangeHandler(e, "carouselText2")}
-              value={this.state.carouselText2}
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 1)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
             />
-          </div>
-          <div className="Name MainManName">
-            <p>Carousel Text 3 :</p>
-            <input
-              placeholder="Text on Carousel"
-              onChange={e => this.inputChangeHandler(e, "carouselText3")}
-              value={this.state.carouselText3}
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 2)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
             />
-          </div>
-          <div className="Name MainManName">
-            <p>Carousel Text 4 :</p>
-            <input
-              placeholder="Text on Carousel"
-              onChange={e => this.inputChangeHandler(e, "carouselText4")}
-              value={this.state.carouselText4}
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 3)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
             />
           </div>
         </div>
-
         <div className="PrimTag">
           <div className="Tag">
             <p>TAG 1 :</p>
@@ -205,6 +225,55 @@ class ManagerMain extends Component {
             />
           </div>
         </div>
+        <div>
+          <p className="imgUploaderTitle">Tag Images</p>
+          <div className="imgUploaderGroup">
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 0)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
+            />
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 1)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
+            />
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 2)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
+            />
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 3)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
+            />
+          </div>
+        </div>
         <div className="Description">
           <p>Contact Text :</p>
           <textarea
@@ -231,104 +300,6 @@ class ManagerMain extends Component {
             onChange={e => this.inputChangeHandler(e, "help")}
             value={this.state.help}
           />
-        </div>
-        <div>
-          <p className="imgUploaderTitle">Carousel Images</p>
-          <div className="imgUploaderGroup">
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop("carousel_imgs", u, 0)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop("carousel_imgs", u, 1)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop("carousel_imgs", u, 2)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop("carousel_imgs", u, 3)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-          </div>
-        </div>
-        <div>
-          <p className="imgUploaderTitle">Tag Images</p>
-          <div className="imgUploaderGroup">
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop("tag_imgs", u, 0)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop("tag_imgs", u, 1)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop("tag_imgs", u, 2)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop("tag_imgs", u, 3)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-          </div>
         </div>
         <div className="submitBtnDiv">
           <button className="submitBtn normalBtn" onClick={this.submitItem}>
