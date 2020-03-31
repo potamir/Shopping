@@ -2,7 +2,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router";
 import { browserHistory } from "react-router";
-
 import "./styles.sass";
 
 let mq = window.matchMedia("(max-width: 768px)");
@@ -206,7 +205,7 @@ class Header extends Component {
         <div className={"header_logodiv"}>
           <img
             className={"header_logo"}
-            src={require("../../assets/images/logo.png")}
+            src="ftp://45.130.228.116/domains/couturehijaab.id/images/example.jpg"
           />
         </div>
         {this.state.menuActive ? this.menuButton : ""}
