@@ -1,0 +1,463 @@
+@import './variables.sass'
+
+@media screen and (max-width: 400px)
+  .lIWrapper, .cIWrapper
+    & > *
+      flex-basis: 100%
+      flex: 0 1 calc(50% -2rem)
+  h3.error
+    font-size: 2rem
+  .priceWrapper
+    flex-direction: column
+    .inputWrapper
+      align-items: left
+      .input
+        width: 100%
+      &:first-child
+        margin-right: 0 !important
+      &:last-child
+        margin-left: 0 !important
+
+@media screen and (min-width: 768px)
+  button.normalBtn
+    padding: .5rem 1rem !important
+  .wrapper
+    margin: 0px auto
+    padding-left: 0px !important
+    padding-right: 0px !important
+    padding-bottom: 75px !important
+    padding-top: 0px !important
+
+  .footer
+    width: 100vw
+    height: 400px
+    position: absolute
+    display: flex
+    flex-direction: row
+    align-items: center
+    justify-content: space-evenly
+    background-color: #111111
+    right: 0vw
+
+  .footerChildDiv
+    width: 300px
+    height: 70%
+    display: flex
+    flex-direction: column
+    justify-content: flex-start
+    text-align: center
+
+  .footerTitle
+    color: #ffb9b9
+    cursor: default
+    font-weight: bold
+    border-style: solid
+    border-bottom-width: 1px
+    font-size: 16px
+
+  .footerContent
+    padding-top: 10px
+    color: #efefef
+    font-size: 12px
+
+  .img_div
+    height: 500px
+    width: 100%
+
+  .item_text
+    position: relative
+    top: 0
+    left: 0
+    width: 100%
+  .item_caro
+    max-height: auto
+    max-width: auto
+
+  .caro
+    margin-top: 100px
+    margin-bottom: 50px
+    padding-left: 75px
+    padding-right: 75px
+
+  .header
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+    background-color: #111111
+    height: 80px
+
+  .header > h1
+    flex: 1
+    text-align: left
+
+  .headerExt
+    width: 100%
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+
+  .header_logodiv
+    position: absolute
+    display: flex
+    align-items: center
+    justify-content: center
+    height: 80px
+
+  .header_logo
+    height: 75px
+    width: auto
+
+  .logo
+    font-size: 1.5rem !important
+    color: #efefef
+    margin-left: 10px
+    font-weight: bold
+    border-style: solid
+    border-bottom-width: 1px
+    &:active, &:hover
+      color: #ffb9b9
+
+  .appMain
+    min-height: 100vh
+  .menu
+    flex: none
+    height: auto
+    display: flex
+    width: 100%
+  .innerMenu
+    display: flex
+    flex-direction: row
+    width: 50%
+  .innerMenuDirection1
+    justify-content: flex-start
+    align-items: center
+  .innerMenuDirection2
+    justify-content: flex-end
+    align-items: center
+
+  .navLink
+    margin-left: 12px
+    font-size: .8rem
+    &:last-child
+      border: none
+      padding: 0
+  .cartMenu
+    margin-right: 20px
+    font-size: 1rem
+    color: white
+
+  .login
+    margin-right: 20px
+    font-size: 1rem
+    color: white
+
+  .cImgDiv
+    width: 100px
+
+  .cartIcon
+    height: 75px
+
+  .AdminMain
+    padding-left: 50px
+    padding-right: 50px
+
+  .AdminHeader
+    width: 100%
+    text-align: center
+    padding: 10px
+    margin-bottom: 20px
+
+  .NameField
+    width: 100%
+    display: flex
+    flex-direction: row
+    align-items: center
+    justify-content: space-between
+
+  .Name
+    flex: 2
+
+  .MainManName
+    margin: 10px
+
+  .LoginUserNP
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+
+  .loginInp
+    width: 400px
+    text-align: center
+
+  .NPL
+    flex: 1
+    margin: 10px
+
+  .LoadImage
+    margin: 10px
+    max-width: 400px
+
+  .Description
+    width: 100%
+    margin: 10px
+
+  .PrimTag
+    display: flex
+    width: 100%
+    flex-direction: row
+    flex-wrap: wrap
+
+  .Tag
+    margin: 10px
+    flex: 1
+
+  .DescTx
+    padding: .5rem 1rem
+    resize: none
+    height: 12rem
+    box-sizing: border-box
+    width: 100% !important
+
+  .imgUploaderGroup
+    display: flex
+    flex-direction: row
+    flex-wrap: wrap
+    align-items: center
+    justify-content: space-between
+
+  .imgUploader
+    flex: 1
+    margin: 20px
+    height: 300px
+    min-width: 10vw
+    display: flex
+    align-items: center
+    justify-content: center
+    background-color: white
+
+  .adImgDiv
+    padding: 6px
+    width: 300px
+    text-align: center
+
+  .descAdDiv
+    padding: 6p
+    margin-left: 3%
+    width: 300px
+    text-align: center
+
+  .item
+    padding: 20px
+    margin-bottom: 20px
+    width: auto
+    height: 35vw
+    justify-content: space-between
+    align-items: center
+
+  .contentItem
+    height: 100%
+    background-position: 0 0
+    cursor: pointer
+    padding-left: 75px
+    padding-right: 75px
+
+  .itemNew
+    width: 20vw
+    height: 300px
+    padding: 0px
+    margin-bottom: 50px
+    flex-wrap: wrap
+    transition: transform 1s
+    &:hover
+      -ms-transform: scale(1.2)
+      -webkit-transform: scale(1.2)
+      transform: scale(1.2)
+
+  .itemNewHeader
+    height: 50px
+    font-size: 14px
+    display: flex
+    align-items: flex-end
+    justify-content: center
+    cursor: default
+    font-family: roboto
+    font-weight: bold
+    &:hover
+      font-weight: bolder
+
+  .itemNewDiv
+    margin-top: 50px
+
+  .itemNewPrice
+    height: 25px
+    cursor: default
+    font-size: 12px
+    font-family: roboto
+    font-weight: bold
+    &:hover
+      font-weight: bolder
+
+  .itemTagsMainTitle
+    width: 100%
+    cursor: default
+    text-align: center
+
+  .itemTagsMainDiv
+    display: flex
+    width: 100vw
+    height: 800px
+    flex-direction: column
+    justify-content: flex-start
+    align-items: flex-start
+
+  .contentNew
+    height: 200px
+    width: 150px
+    background-position: 0 0
+    cursor: pointer
+    -webkit-transition: opacity 0.25s ease-in-out
+    -moz-transition: opacity 0.25s ease-in-out
+    -ms-transition: opacity 0.25s ease-in-out
+    -o-transition: opacity 0.25s ease-in-out
+    opacity: 0.5
+
+  .itemImg
+    height: 400px
+    width: 300px
+    background-position: 0 0
+
+  .otherInfo
+    margin: 0 2rem
+
+  .basicInfo
+    padding: 0 1.5rem
+
+  .profilePic
+    width: 150px
+    height: 150px
+
+  .infoWrapper
+    flex-direction: row
+
+  h3.error
+    margin: 25vh 0
+
+  .tradesInfoWrapper
+    flex-direction: row
+    justify-content: space-between
+    .tradeReqWrapper, .tradeProposedWrapper
+      flex: 0 1 calc(50% - 1rem)
+
+  .addImage
+    height: auto
+    width: 100%
+
+  .trWrapper, .ptWrapper, .uIWrapper
+    .userImg
+      margin-top: .2rem
+      flex: 0 0 4rem
+      height: 4rem
+      width: 4rem
+    .lower
+      display: flex
+    h4
+      font-size: 1rem
+    a
+      font-size: 1rem
+  .tradeProposedWrapper
+    margin-top: 0
+  .itemImgWrapper
+    background: #eee
+    flex: 1
+    min-height: 50vh
+    height: 400px
+    display: flex
+    align-items: flex-end
+    justify-content: flex-end
+
+  .itemPageWrapper
+    flex-direction: row
+    margin-top: 50px
+    .itemInfoWrapper
+      margin-left: 2rem
+      margin-top: 0
+    .reqTradeBtn
+      margin: 3rem 0 2rem 0
+      border: solid 2px $black
+  .uIWrapper
+    margin: 0 0 4rem 0
+    .upper
+      flex-direction: row
+    .itemCost
+      color: lighten($black, 20%)
+      font-size: 1.2rem
+      margin: 1rem 0
+      font-weight: 500
+    .addDate
+      margin: .5rem 0
+      font-weight: 500
+    .itemDescription
+      margin: 2rem 0
+    .itemInfo
+      margin-left: 3rem
+    .userImg
+      margin-top: .2rem
+      flex: 0 0 10rem
+      height: 10rem
+      width: 10rem
+  .myItemsWrapper
+    padding: 0 0 2rem 0
+
+  .addItemWrapper
+    .itemWrapper
+      display: flex
+      flex-direction: row !important
+      .itemPicWrapper
+        .img
+          height: 12rem !important
+          width: 12rem !important
+    .itemInfoWrapper
+      margin-left: 2rem
+      margin-top: 0 !important
+      .inputWrapper
+        display: flex
+        align-items: flex-start
+        justify-content: flex-start
+
+  .paginationContainer
+    width: 100%
+    display: flex
+    justify-content: center
+    align-items: center
+
+  .pagination
+    margin-top: 20px
+
+  .pagination li
+    display: inline-block
+    padding-left: 0
+  .pagination li
+    list-style: none
+    border: 1px solid
+    border-color: rgba(0,0,0,0)
+  .pagination li a,
+  .pagination li span
+    position: relative
+    float: left
+    padding: 6px 12px
+    line-height: 1.42857143
+    text-decoration: none
+    color: #ffb9b9
+    background-color: $black
+    border: 1px solid #dddddd
+    margin-left: -1px
+  .pagination li.active a
+    background-color: #ffb9b9
+    color: $black
+    border-color: #ffb9b9
+
+  .pagination li a
+    &:hover
+      background-color: #ffb9b9
+      color: $black
