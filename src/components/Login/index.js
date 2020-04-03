@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 import passwordHash from "password-hash";
 import Popup from "../Popup/index.js";
 import "./styles.sass";
@@ -23,7 +23,7 @@ class Login extends Component {
   }
   componentDidMount() {
     const status = this.props.location.state;
-    browserHistory.push({
+    this.props.history.push({
       pathname: `/login`,
       state: "loggedout"
     });
@@ -39,7 +39,7 @@ class Login extends Component {
   }
 
   signUp() {
-    browserHistory.push({
+    this.props.history.push({
       pathname: `/signup`
     });
   }
@@ -66,7 +66,7 @@ class Login extends Component {
               "userData",
               JSON.stringify(responseJson.data[0])
             );
-            browserHistory.push({
+            this.props.history.push({
               pathname: `/`,
               state: "login"
             });
@@ -126,4 +126,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default withRouter(Login);

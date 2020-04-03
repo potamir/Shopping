@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-import { Link } from "react-router";
-import { browserHistory } from "react-router";
+import { NavLink } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import "./styles.sass";
 
 let mq = window.matchMedia("(max-width: 768px)");
@@ -33,100 +33,69 @@ class Header extends Component {
     this.loggedInMenu = (
       <div className="menu">
         <div className="innerMenu innerMenuDirection1">
-          <Link
-            onlyActiveOnIndex={true}
-            key={1}
+          <NavLink
             to="/admin"
             activeClassName="activeNavLink"
             className="navLink"
           >
             New
-          </Link>
-          <Link
-            onlyActiveOnIndex={true}
-            key={2}
+          </NavLink>
+          <NavLink
             to="/adminman"
             activeClassName="activeNavLink"
             className="navLink"
           >
             Update
-          </Link>
-          <Link
-            onlyActiveOnIndex={true}
-            key={3}
+          </NavLink>
+          <NavLink
             to="/managermain"
             activeClassName="activeNavLink"
             className="navLink"
           >
             Main
-          </Link>
-          <Link
-            onlyActiveOnIndex={true}
-            key={4}
+          </NavLink>
+          <NavLink
             to="/adpageman"
             activeClassName="activeNavLink"
             className="navLink"
           >
             Advertisement
-          </Link>
+          </NavLink>
           {mq.matches ? (
-            <Link
-              onlyActiveOnIndex={true}
-              key={5}
+            <NavLink
               to="/cart"
               onClick={async () => {
-                const loggedIn = await JSON.parse(
-                  localStorage.getItem("userData")
-                );
-                if (!loggedIn)
-                  browserHistory.push({
-                    pathname: `/login`
-                  });
+                // const loggedIn = await JSON.parse(
+                //   localStorage.getItem("userData")
+                // );
               }}
               activeClassName="activeNavLink"
               className="navLink"
             >
               CART
-            </Link>
+            </NavLink>
           ) : null}
           {mq.matches ? (
-            <Link
-              onlyActiveOnIndex={true}
-              key={6}
+            <NavLink
               to="/login"
               activeClassName="activeNavLink"
               className="navLink"
             >
               Log Out
-            </Link>
+            </NavLink>
           ) : null}
         </div>
         {!mq.matches ? (
           <div className="innerMenu innerMenuDirection2">
-            <Link
-              onlyActiveOnIndex={true}
-              key={5}
+            <NavLink
               to="/cart"
               activeClassName="activeNavLink"
               className="cartMenu navLink"
             >
               CART
-            </Link>
+            </NavLink>
           </div>
         ) : null}
-      </div>
-    );
-
-    this.loggedOutMenu = (
-      <div className="menu loginMenu">
-        <Link
-          onlyActiveOnIndex={true}
-          key={5}
-          activeClassName="activeNavLink"
-          className="navLink"
-        >
-          Login First!
-        </Link>
       </div>
     );
 
@@ -148,11 +117,11 @@ class Header extends Component {
   }
 
   checkLoginStatus() {
-    const loggedIn = JSON.parse(localStorage.getItem("userData"));
-    if (!loggedIn)
-      browserHistory.push({
-        pathname: `/login`
-      });
+    // const loggedIn = JSON.parse(localStorage.getItem("userData"));
+    // if (!loggedIn)
+    //   browserHistory.push({
+    //     pathname: `/login`
+    //   });
   }
 
   setMenuState(width) {
@@ -177,7 +146,7 @@ class Header extends Component {
 
   logOut() {
     localStorage.removeItem("userData");
-    browserHistory.push({
+    this.props.history.push({
       pathname: `/login`,
       state: "logout"
     });
@@ -187,19 +156,18 @@ class Header extends Component {
     return (
       <header className="header">
         <div className="headerExt">
-          <Link onlyActiveOnIndex={true} to="/" className="logo">
+          <NavLink to="/" activeClassName="activeNavLink" className="logo">
             COUTURE HIJAB
-          </Link>
+          </NavLink>
           {!mq.matches ? (
-            <Link
-              onlyActiveOnIndex={true}
-              key={4}
+            <NavLink
+              to="/login"
               onClick={this.logOut}
               activeClassName="activeNavLink"
               className="navLink login"
             >
               Login
-            </Link>
+            </NavLink>
           ) : null}
         </div>
         <div className={"header_logodiv"}>
@@ -215,4 +183,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default withRouter(Header);

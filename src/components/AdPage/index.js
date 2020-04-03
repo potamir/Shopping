@@ -1,8 +1,8 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-// import { browserHistory } from "react-router";
 import "./styles.sass";
 import * as constant from "../constant.js";
+import { withRouter } from "react-router-dom";
 
 const address = constant.ENDPOINT;
 class AdPage extends Component {
@@ -56,4 +56,4 @@ class AdPage extends Component {
   }
 }
 
-export default AdPage;
+export default withRouter(AdPage);

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component, PropTypes } from "react";
-import { browserHistory } from "react-router";
 import CurrencyFormat from "react-currency-format";
+import { withRouter } from "react-router-dom";
 import "./styles.sass";
 
 class AddItemPage extends Component {
@@ -62,7 +62,7 @@ class AddItemPage extends Component {
           <div className="itemWrapper">
             <div className="itemPicWrapper">
               <div className="img">
-                <img src={_props.item.img1} className="addImage" />
+                <img src={_props.item.img} className="addImage" />
               </div>
             </div>
             <div className="itemInfoWrapper">
@@ -127,7 +127,7 @@ class AddItemPage extends Component {
               className="saveItemBtn"
               onClick={async () => {
                 await this.close();
-                browserHistory.push({
+                this.props.history.push({
                   pathname: `/cart`
                 });
               }}
@@ -154,4 +154,4 @@ AddItemPage.propTypes = {
   openClass: PropTypes.string
 };
 
-export default AddItemPage;
+export default withRouter(AddItemPage);

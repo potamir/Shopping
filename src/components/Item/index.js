@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
 // import {Link} from 'react-router';
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 
 import "./styles.sass";
 
@@ -14,7 +14,7 @@ class Item extends Component {
           src={this.props.data.tag_img}
           className="contentItem"
           onClick={() => {
-            browserHistory.push("/TagsItemPage");
+            this.props.history.push("/TagsItemPage");
           }}
         />
       </div>
@@ -22,4 +22,4 @@ class Item extends Component {
   }
 }
 
-export default Item;
+export default withRouter(Item);

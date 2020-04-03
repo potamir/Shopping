@@ -1,9 +1,8 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-import { Link } from "react-router";
 import AddItemPage from "../AddItemPage/index";
 import CurrencyFormat from "react-currency-format";
-import { browserHistory } from "react-router";
+import { withRouter, Link } from "react-router-dom";
 import "./styles.sass";
 
 class ItemPage extends Component {
@@ -41,7 +40,7 @@ class ItemPage extends Component {
   async openModal() {
     const loggedIn = await JSON.parse(localStorage.getItem("userData"));
     if (!loggedIn)
-      browserHistory.push({
+      this.props.history.push({
         pathname: `/login`
       });
     const scrollBar = document.querySelector(".scrollbar-measure");
@@ -108,4 +107,4 @@ class ItemPage extends Component {
   }
 }
 
-export default ItemPage;
+export default withRouter(ItemPage);

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 import "./styles.sass";
 import ImageUploader from "react-images-upload";
 import * as constant from "../constant.js";
@@ -118,9 +118,7 @@ class AdminMan extends Component {
         console.log(responseJson);
         if (responseJson.status === "success") {
           if (this.state.status === "edit")
-            browserHistory.push({
-              pathname: `/AdminMan`
-            });
+            this.props.history.push("/AdminMan");
           else window.location.reload();
         }
       });
@@ -257,4 +255,4 @@ class AdminMan extends Component {
   }
 }
 
-export default AdminMan;
+export default withRouter(AdminMan);

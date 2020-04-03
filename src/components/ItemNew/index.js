@@ -1,7 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-// import {Link} from 'react-router';
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import CurrencyFormat from "react-currency-format";
@@ -35,7 +34,8 @@ class ItemNew extends Component {
       name: _props.items.name,
       price: _props.items.price,
       description: _props.items.description,
-      img: _props.items.img1
+      img: _props.items.img1,
+      total: _props.items.total
     };
     return (
       <div className="itemNew">
@@ -44,7 +44,7 @@ class ItemNew extends Component {
           src={`${_props.items[flipped]}`}
           className="contentNew"
           onClick={() => {
-            browserHistory.push({
+            this.props.history.push({
               pathname: `/item/${_props.index}`,
               state: { item: newItem, _from: _props.from }
             });
@@ -75,4 +75,4 @@ class ItemNew extends Component {
   }
 }
 
-export default ItemNew;
+export default withRouter(ItemNew);

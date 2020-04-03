@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 import "./styles.sass";
 import CurrencyFormat from "react-currency-format";
 // import ImageUploader from "react-images-upload";
@@ -87,7 +87,8 @@ class Admin extends Component {
   }
 
   async editItem(val) {
-    browserHistory.push({
+    console.log(val);
+    this.props.history.push({
       pathname: `/Admin`,
       state: { item: val, status: "edit" }
     });
@@ -120,46 +121,48 @@ class Admin extends Component {
           yesCommand={this.deleteItem}
           buttonType={"choice"}
         />
-        {this.state.data.map((value, index) => {
-          return (
-            <div key={index} className="itemEa">
-              <div className="leftDesc">
-                <div className="cImgDiv">
-                  <img src={value.img1} className="cartIcon" />
+        <div className='itemEaWrapper'>
+          {this.state.data.map((value, index) => {
+            return (
+              <div key={index} className="itemEa">
+                <div className="leftDesc">
+                  <div className="cImgDiv">
+                    <img src={value.img1} className="cartIcon" />
+                  </div>
+                  <div>
+                    <h4>{value.name}</h4>
+                    <p>
+                      {value.total} Item{value.total > 1 ? "s" : null} Left
+                    </p>
+                    <CurrencyFormat
+                      value={value.price}
+                      displayType={"text"}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      prefix={"Rp."}
+                      suffix={",-"}
+                      renderText={curr_value => <p>{curr_value}</p>}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <h4>{value.name}</h4>
-                  <p>
-                    {value.total} Item{value.total > 1 ? "s" : null} Left
-                  </p>
-                  <CurrencyFormat
-                    value={value.price}
-                    displayType={"text"}
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    prefix={"Rp."}
-                    suffix={",-"}
-                    renderText={curr_value => <p>{curr_value}</p>}
-                  />
+                <div className="buttonDiv">
+                  <button
+                    className="deleteBtn adminManBtn normalBtn"
+                    onClick={() => this.deleteListedItem(value)}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className="editBtn adminManBtn normalBtn"
+                    onClick={() => this.editItem(value)}
+                  >
+                    Edit
+                  </button>
                 </div>
               </div>
-              <div className="buttonDiv">
-                <button
-                  className="deleteBtn adminManBtn normalBtn"
-                  onClick={() => this.deleteListedItem(value)}
-                >
-                  Delete
-                </button>
-                <button
-                  className="editBtn adminManBtn normalBtn"
-                  onClick={() => this.editItem(value)}
-                >
-                  Edit
-                </button>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
         <div className="paginationContainer">
           <Pagination
             hideDisabled
@@ -176,4 +179,4 @@ class Admin extends Component {
   }
 }
 
-export default Admin;
+export default withRouter(Admin);

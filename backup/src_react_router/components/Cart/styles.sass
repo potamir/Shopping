@@ -1,0 +1,61 @@
+@import '../../styles/variables.sass'
+
+.cart
+  max-height: 800px
+  overflow-y: auto
+  overflow-x: hidden
+.itemEa
+  padding: 10px
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: space-between
+  width: 100%
+  background-color: #ddd
+  &:nth-child(even)
+    background-color: #ccc
+  &:hover
+    background-color: #bbb
+    cursor: pointer
+.buttonDiv
+  margin-right: 20px
+.normalBtn
+  font-size: .8rem
+  font-weight: 600
+  text-transform: uppercase
+  padding: .2rem 1rem
+  cursor: pointer
+  transition: opacity .3s
+.acceptBtn
+  background: $black
+  color: #fff
+  &:hover
+    background-color: #aa3344
+.declineBtn
+  font-size: 1.0rem
+  width: 100%
+  margin-top: 20px
+  margin-bottom: 20px
+  margin-left: 1rem
+  margin-right: 1rem
+  background: none
+  border: solid 2px
+  &:hover
+    background-color: $black
+    color: #fff
+.pyBtnDiv
+  width: 100%
+  display: flex
+  justify-content: center
+  align-items: center
+
+.cImgDiv
+  width: 75px
+
+.cartIcon
+  height: 75px
+
+.leftDesc
+  display: flex
+  flex-direction: row
+  align-items: center

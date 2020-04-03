@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
 import CurrencyFormat from "react-currency-format";
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 
 import "./styles.sass";
 import * as constant from "../constant.js";
@@ -16,7 +16,7 @@ class Cart extends Component {
   async componentDidMount() {
     const loggedIn = await JSON.parse(localStorage.getItem("userData"));
     if (!loggedIn)
-      browserHistory.push({
+      this.props.history.push({
         pathname: `/login`
       });
     await this.setItems();
@@ -24,7 +24,7 @@ class Cart extends Component {
   }
 
   async getItem() {
-    console.log('aweae',this.state.items);
+    console.log("aweae", this.state.items);
     // const data = this.state;
     await fetch(`http://${address}/items_get_id`, {
       method: "POST",
@@ -99,4 +99,4 @@ class Cart extends Component {
   }
 }
 
-export default Cart;
+export default withRouter(Cart);

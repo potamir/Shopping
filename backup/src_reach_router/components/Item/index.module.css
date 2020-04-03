@@ -1,0 +1,11 @@
+.item {
+  padding-bottom: 4%;
+  height: 250px;
+  flex: 0 1 48%;
+  align-items: stretch;
+}
+.content {
+  height: 100%;
+  cursor: pointer;
+  background: wheat;
+}
