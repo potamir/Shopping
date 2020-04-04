@@ -29,21 +29,6 @@ class App extends Component {
       });
   }
 
-  getShipping() {
-    fetch(`https://api.rajaongkir.com/starter/province?id=12`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        key: "8df3fc61dbed2cccecd359a4ed17eb38"
-      }
-    })
-      .then(response => response.json())
-      .then(async responseJson => {
-        console.log("prov", responseJson);
-      });
-  }
-
   render() {
     return (
       <div className="wrapper">

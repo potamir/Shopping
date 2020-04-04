@@ -157,7 +157,7 @@ class Header extends Component {
       <header className="header">
         <div className="headerExt">
           <NavLink to="/" activeClassName="activeNavLink" className="logo">
-            COUTURE HIJAB
+            COUTURE HIJAAB
           </NavLink>
           {!mq.matches ? (
             <NavLink

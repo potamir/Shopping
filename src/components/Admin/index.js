@@ -23,7 +23,8 @@ class AdminMan extends Component {
       tag3: [],
       tag4: [],
       status: "",
-      itemId: 0
+      itemId: 0,
+      weight: []
     };
     this.onDrop = this.onDrop.bind(this);
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
@@ -48,7 +49,8 @@ class AdminMan extends Component {
         tag3: [item.tag3],
         tag4: [item.tag4],
         status: "edit",
-        itemId: item.item_id
+        itemId: item.item_id,
+        weight: [item.weight]
       });
     }
   }
@@ -110,7 +112,8 @@ class AdminMan extends Component {
         tag3: data.tag3,
         tag4: data.tag4,
         status: data.status,
-        itemId: data.itemId
+        itemId: data.itemId,
+        weight: data.weight
       })
     })
       .then(response => response.json())
@@ -138,7 +141,7 @@ class AdminMan extends Component {
             />
           </div>
           <div className="NPL">
-            <p>PRICE :</p>
+            <p>PRICE(Rupiah) :</p>
             <input
               placeholder="Item Price"
               onChange={e => this.inputChangeHandler(e, "price")}
@@ -151,6 +154,14 @@ class AdminMan extends Component {
               placeholder="Total Quantity"
               onChange={e => this.inputChangeHandler(e, "total")}
               value={this.state.total}
+            />
+          </div>
+          <div className="NPL">
+            <p>WEIGHT(gram) :</p>
+            <input
+              placeholder="Item Weight"
+              onChange={e => this.inputChangeHandler(e, "weight")}
+              value={this.state.weight}
             />
           </div>
         </div>

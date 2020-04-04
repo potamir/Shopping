@@ -35,7 +35,8 @@ class ItemNew extends Component {
       price: _props.items.price,
       description: _props.items.description,
       img: _props.items.img1,
-      total: _props.items.total
+      total: _props.items.total,
+      weight: _props.items.weight
     };
     return (
       <div className="itemNew">
