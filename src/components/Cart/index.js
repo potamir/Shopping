@@ -19,6 +19,7 @@ const StyledFormControl = styled(FormControl)({
 });
 
 const address = constant.ENDPOINT;
+const imgsrc = constant.IMGSRC;
 class Cart extends Component {
   constructor(props) {
     super(props);
@@ -155,7 +156,7 @@ class Cart extends Component {
               <div key={index} className="itemEa">
                 <div className="leftDesc">
                   <div className="cImgDiv">
-                    <img src={value.img} className="cartIcon" />
+                    <img src={`${imgsrc}${value.img}`} className="cartIcon" />
                   </div>
                   <div className="itemEaOnCart">
                     <div>
@@ -173,7 +174,7 @@ class Cart extends Component {
                         prefix={"Price: Rp."}
                         suffix={",-"}
                         renderText={(curr_value) => (
-                          <p className="itemsOnCartDetP">{curr_value}</p>
+                          <p className="itemsOnCartDetPrice">{curr_value}</p>
                         )}
                       />
                       <CurrencyFormat
@@ -217,8 +218,9 @@ class Cart extends Component {
           <h3 className="totalTitle">Total Payment</h3>
           {this.state.data.map((value, index) => {
             const total = value.price * parseInt(value.onCart);
+            const weight = value.weight * parseInt(value.onCart);
             allTotal += total;
-            allWeigth += value.weight;
+            allWeigth += weight;
             return (
               <CurrencyFormat
                 value={total}
@@ -276,9 +278,13 @@ class Cart extends Component {
           <StyledFormControl>
             <InputLabel htmlFor="grouped-select">Province</InputLabel>
             <Select
-              onChange={(e) =>
-                this.dropdownHandler("selectedProv", e.target.value.province_id)
-              }
+              onChange={async (e) => {
+                await this.dropdownHandler(
+                  "selectedProv",
+                  e.target.value.province_id
+                );
+                this.setState({ selectedCity: "" });
+              }}
               defaultValue=""
               id="grouped-select"
             >

@@ -59,7 +59,7 @@ class Header extends Component {
             activeClassName="activeNavLink"
             className="navLink"
           >
-            Advertisement
+            Adv
           </NavLink>
           <NavLink
             to="/origin"
@@ -160,6 +160,7 @@ class Header extends Component {
   }
 
   render() {
+    let user = JSON.parse(localStorage.getItem("userData"));
     return (
       <header className="header">
         <div className="headerExt">
@@ -173,14 +174,14 @@ class Header extends Component {
               activeClassName="activeNavLink"
               className="navLink login"
             >
-              Login
+              {user ? `Welcome, ${user.user_full_name.split(" ")[0]}` : "Login"}
             </NavLink>
           ) : null}
         </div>
         <div className={"header_logodiv"}>
           <img
             className={"header_logo"}
-            src={require("../../assets/images/logo.png")}
+            src={'http://images.couturehijaab.id/logo.png'}
           />
         </div>
         {this.state.menuActive ? this.menuButton : ""}

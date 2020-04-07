@@ -8,6 +8,7 @@ import Pagination from "react-js-pagination";
 import Popup from "../Popup/index.js";
 import * as constant from "../constant.js";
 const address = constant.ENDPOINT;
+const imgsrc = constant.IMGSRC;
 
 const totalInOnePage = 10;
 
@@ -21,7 +22,7 @@ class Admin extends Component {
       totalItems: 0,
       modalIsOpen: false,
       modalMsg: "",
-      selectedItem: ""
+      selectedItem: "",
     };
     this.editItem = this.editItem.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
@@ -40,7 +41,7 @@ class Admin extends Component {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         tag1: "",
@@ -48,14 +49,14 @@ class Admin extends Component {
         tag3: "",
         tag4: "",
         renderFrom: renderFrom,
-        renderUntil: totalInOnePage
-      })
+        renderUntil: totalInOnePage,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         await this.setState({
           data: responseJson,
-          totalItems: responseJson[0].TotalRows
+          totalItems: responseJson[0].TotalRows,
         });
       });
   }
@@ -66,14 +67,14 @@ class Admin extends Component {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        itemId: this.state.selectedItem
-      })
+        itemId: this.state.selectedItem,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         if (responseJson.status === "success") window.location.reload();
       });
   }
@@ -81,7 +82,7 @@ class Admin extends Component {
   async handlePageChange(pageNumber) {
     console.log(`active page is ${pageNumber}`);
     await this.setState({
-      currPage: pageNumber
+      currPage: pageNumber,
     });
     this.getItem((pageNumber - 1) * totalInOnePage);
   }
@@ -90,7 +91,7 @@ class Admin extends Component {
     console.log(val);
     this.props.history.push({
       pathname: `/Admin`,
-      state: { item: val, status: "edit" }
+      state: { item: val, status: "edit" },
     });
   }
 
@@ -106,7 +107,7 @@ class Admin extends Component {
     this.setState({
       selectedItem: val.item_id,
       modalIsOpen: true,
-      modalMsg: `Are you sure want to delete ${val.name}?`
+      modalMsg: `Are you sure want to delete ${val.name}?`,
     });
   }
   render() {
@@ -121,13 +122,13 @@ class Admin extends Component {
           yesCommand={this.deleteItem}
           buttonType={"choice"}
         />
-        <div className='itemEaWrapper'>
+        <div className="itemEaWrapper">
           {this.state.data.map((value, index) => {
             return (
               <div key={index} className="itemEa">
                 <div className="leftDesc">
                   <div className="cImgDiv">
-                    <img src={value.img1} className="cartIcon" />
+                    <img src={`${imgsrc}${value.img1}`} className="cartIcon" />
                   </div>
                   <div>
                     <h4>{value.name}</h4>
@@ -141,7 +142,7 @@ class Admin extends Component {
                       decimalSeparator=","
                       prefix={"Rp."}
                       suffix={",-"}
-                      renderText={curr_value => <p>{curr_value}</p>}
+                      renderText={(curr_value) => <p>{curr_value}</p>}
                     />
                   </div>
                 </div>

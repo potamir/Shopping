@@ -4,8 +4,9 @@ import { withRouter } from "react-router-dom";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import CurrencyFormat from "react-currency-format";
-
 import "./styles.sass";
+import * as constant from "../constant.js";
+const imgsrc = constant.IMGSRC;
 
 class ItemNew extends Component {
   constructor(props) {
@@ -17,12 +18,12 @@ class ItemNew extends Component {
   opacityHandler(param) {
     this.setState({
       timeOutx: setTimeout(
-        async function() {
+        async function () {
           await this.setState({ flipped: param });
           this.setState({ opacity: 1 });
         }.bind(this),
         500
-      )
+      ),
     });
   }
   render() {
@@ -36,18 +37,18 @@ class ItemNew extends Component {
       description: _props.items.description,
       img: _props.items.img1,
       total: _props.items.total,
-      weight: _props.items.weight
+      weight: _props.items.weight,
     };
     return (
       <div className="itemNew">
         <img
           style={{ opacity: this.state.opacity }}
-          src={`${_props.items[flipped]}`}
+          src={`${imgsrc}${_props.items[flipped]}`}
           className="contentNew"
           onClick={() => {
             this.props.history.push({
               pathname: `/item/${_props.index}`,
-              state: { item: newItem, _from: _props.from }
+              state: { item: newItem, _from: _props.from },
             });
           }}
           onMouseOver={async () => {
@@ -69,7 +70,7 @@ class ItemNew extends Component {
           decimalSeparator=","
           prefix={"Rp."}
           suffix={",-"}
-          renderText={value => <div className="itemNewPrice">{value}</div>}
+          renderText={(value) => <div className="itemNewPrice">{value}</div>}
         />
       </div>
     );
