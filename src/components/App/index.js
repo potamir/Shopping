@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
-import React, { Component, PropTypes } from "react";
-import ReactCSSTransitionGroup from "react-addons-css-transition-group";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { CSSTransitionGroup } from "react-transition-group";
 
 import Header from "../Header/index";
 import Footer from "../Footer/index";
@@ -20,11 +21,11 @@ class App extends Component {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         await localStorage.setItem("mainman", JSON.stringify(responseJson[0]));
       });
   }
@@ -33,7 +34,7 @@ class App extends Component {
     return (
       <div className="wrapper">
         <Header />
-        <ReactCSSTransitionGroup
+        <CSSTransitionGroup
           transitionName="content"
           transitionEnterTimeout={500}
           transitionLeaveTimeout={300}
@@ -41,7 +42,7 @@ class App extends Component {
           <div className="appMain">
             <Routes />
           </div>
-        </ReactCSSTransitionGroup>
+        </CSSTransitionGroup>
         <Footer />
       </div>
     );
@@ -50,7 +51,7 @@ class App extends Component {
 
 App.propTypes = {
   children: PropTypes.element,
-  location: PropTypes.object
+  location: PropTypes.object,
 };
 
 export default App;

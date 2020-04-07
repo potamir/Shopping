@@ -68,7 +68,7 @@
   flex-direction: column
   justify-content: space-between
   height: 100%
-  width: 600px
+  min-width: 500px
 
 .itemsOnCart
   display: flex
@@ -77,6 +77,67 @@
   flex-wrap: wrap
 
 .itemsOnCartDet
-  margin-right: 20px
+  flex: 1
   &:hover
     font-weight: bolder
+
+.itemsOnCartDetPrice
+  flex: 2
+  text-align: center
+  &:hover
+    font-weight: bolder
+
+.totalContainer
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: column
+
+.totalTitle
+  margin-bottom: 20px
+
+.totalFormatCon
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: row
+  width: 30rem
+
+.totalFormat
+  text-align: right
+
+.totalNamFormat
+  flex: 6
+  font-size: 0.9rem
+
+.totalCurFormat
+  flex: 1
+  font-size: 1rem
+
+.totalValFormat
+  flex: 3
+  display: flex
+  justify-content: flex-end
+  align-items: center 
+  font-size: 1rem
+
+.totalDesFormat
+  flex: 3
+  display: flex
+  justify-content: flex-end
+  align-items: center 
+  font-size: 1rem
+
+.totalTotFormat
+  flex: 6
+  font-size: 1rem
+  font-weight: bold
+
+.additionTemp
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: row
+  width: 30rem
+  border-style: solid
+  border-bottom-width: 1px

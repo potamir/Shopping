@@ -3,24 +3,49 @@ import React, { Component } from "react";
 import CurrencyFormat from "react-currency-format";
 import { withRouter } from "react-router-dom";
 import Pagination from "react-js-pagination";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import { styled } from "@material-ui/core/styles";
 
 import "./styles.sass";
 import * as constant from "../constant.js";
 const totalInOnePage = 10;
 
+const StyledFormControl = styled(FormControl)({
+  margin: 5,
+  minWidth: 400,
+});
+
 const address = constant.ENDPOINT;
 class Cart extends Component {
   constructor(props) {
     super(props);
-    this.state = { items: [], data: [], currPage: 1, totalItems: 0 };
+    this.state = {
+      items: [],
+      data: [],
+      currPage: 1,
+      totalItems: 0,
+      provs: [],
+      cities: [],
+      selectedProv: "",
+      selectedCity: "",
+      selectedType: "REG",
+      shippingCost: [],
+      finalShipCost: 0,
+    };
     this.removeHandler = this.removeHandler.bind(this);
     this.handlePageChange = this.handlePageChange.bind(this);
+    this.dropdownHandler = this.dropdownHandler.bind(this);
+    this.calcCost = this.calcCost.bind(this);
+    this.setFinalShipCost = this.setFinalShipCost.bind(this);
   }
   async componentDidMount() {
     const loggedIn = await JSON.parse(localStorage.getItem("userData"));
     if (!loggedIn)
       this.props.history.push({
-        pathname: `/login`
+        pathname: `/login`,
       });
     await this.setItems();
     await this.getItem();
@@ -33,14 +58,14 @@ class Cart extends Component {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        items: this.state.items
-      })
+        items: this.state.items,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         this.setState({ data: responseJson, totalItems: responseJson.length });
       });
   }
@@ -50,20 +75,47 @@ class Cart extends Component {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         if (responseJson.status)
-          console.log("res", responseJson.data.rajaongkir.results);
+          this.setState({
+            provs: responseJson.provs.rajaongkir.results,
+            cities: responseJson.cities.rajaongkir.results,
+          });
+      });
+  }
+
+  async calcCost(totalWeight) {
+    const _state = this.state;
+    await fetch(`http://${address}/shp_cost`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        dest: _state.selectedCity,
+        weight: totalWeight,
+      }),
+    })
+      .then((response) => response.json())
+      .then(async (responseJson) => {
+        if (responseJson.status) {
+          await this.setState({
+            shippingCost: responseJson.result.rajaongkir.results[0].costs,
+          });
+          this.setFinalShipCost();
+        } else console.log(responseJson.result);
       });
   }
 
   async setItems() {
     let tempItems = await { ...localStorage };
     await this.setState({
-      items: Object.entries(tempItems)
+      items: Object.entries(tempItems),
     });
   }
 
@@ -75,12 +127,25 @@ class Cart extends Component {
   async handlePageChange(pageNumber) {
     console.log(`active page is ${pageNumber}`);
     await this.setState({
-      currPage: pageNumber
+      currPage: pageNumber,
     });
     this.getItem((pageNumber - 1) * totalInOnePage);
   }
+
+  dropdownHandler(_state, value) {
+    this.setState({ [_state]: value });
+  }
+
+  setFinalShipCost() {
+    let cost = this.state.shippingCost[0].cost[0].value;
+    if (this.state.selectedType === "REG")
+      cost = this.state.shippingCost[1].cost[0].value;
+    this.setState({ finalShipCost: cost });
+  }
+
   render() {
-    console.log(this.state.data);
+    let allTotal = 0;
+    let allWeigth = 0;
     return (
       <div className="cart">
         <div className="itemEaWrapper">
@@ -107,8 +172,8 @@ class Cart extends Component {
                         decimalSeparator=","
                         prefix={"Price: Rp."}
                         suffix={",-"}
-                        renderText={curr_value => (
-                          <p className="itemsOnCartDet">{curr_value}</p>
+                        renderText={(curr_value) => (
+                          <p className="itemsOnCartDetP">{curr_value}</p>
                         )}
                       />
                       <CurrencyFormat
@@ -118,8 +183,8 @@ class Cart extends Component {
                         decimalSeparator=","
                         prefix={"Total: Rp."}
                         suffix={",-"}
-                        renderText={curr_value => (
-                          <p className="itemsOnCartDet">{curr_value}</p>
+                        renderText={(curr_value) => (
+                          <p className="itemsOnCartDetPrice">{curr_value}</p>
                         )}
                       />
                     </div>
@@ -137,7 +202,7 @@ class Cart extends Component {
             );
           })}
         </div>
-        <div className="paginationContainer">
+        <div className="paginationContainer cartPaginationContainer">
           <Pagination
             hideDisabled
             innerClass={"pagination"}
@@ -147,6 +212,125 @@ class Cart extends Component {
             totalItemsCount={this.state.totalItems}
             onChange={this.handlePageChange}
           />
+        </div>
+        <div className="totalContainer">
+          <h3 className="totalTitle">Total Payment</h3>
+          {this.state.data.map((value, index) => {
+            const total = value.price * parseInt(value.onCart);
+            allTotal += total;
+            allWeigth += value.weight;
+            return (
+              <CurrencyFormat
+                value={total}
+                key={index}
+                displayType={"text"}
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix={""}
+                suffix={",-"}
+                renderText={(total) => (
+                  <div className="totalFormatCon">
+                    <p className="totalNamFormat">{value.name}</p>
+                    <p className="totalCurFormat">Rp.</p>
+                    <p className="totalValFormat">{total}</p>
+                  </div>
+                )}
+              />
+            );
+          })}
+          <CurrencyFormat
+            value={this.state.finalShipCost}
+            displayType={"text"}
+            thousandSeparator="."
+            decimalSeparator=","
+            prefix={""}
+            suffix={",-"}
+            renderText={(total) => (
+              <div className="totalFormatCon">
+                <p className="totalNamFormat">{"Shipping Cost"}</p>
+                <p className="totalCurFormat">Rp.</p>
+                <p className="totalDesFormat">
+                  {total === "0,-" ? "Fill Destination!" : total}
+                </p>
+              </div>
+            )}
+          />
+          <div className="additionTemp"></div>
+          <CurrencyFormat
+            value={allTotal + this.state.finalShipCost}
+            displayType={"text"}
+            thousandSeparator="."
+            decimalSeparator=","
+            prefix={""}
+            suffix={",-"}
+            renderText={(total) => (
+              <div className="totalFormatCon">
+                <p className="totalTotFormat">{"TOTAL"}</p>
+                <p className="totalCurFormat">Rp.</p>
+                <p className="totalValFormat">{total}</p>
+              </div>
+            )}
+          />
+        </div>
+        <div className="dropdownLocation">
+          <StyledFormControl>
+            <InputLabel htmlFor="grouped-select">Province</InputLabel>
+            <Select
+              onChange={(e) =>
+                this.dropdownHandler("selectedProv", e.target.value.province_id)
+              }
+              defaultValue=""
+              id="grouped-select"
+            >
+              {this.state.provs.map((value, index) => {
+                return (
+                  <MenuItem key={index} value={value}>
+                    {value.province}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </StyledFormControl>
+          <StyledFormControl>
+            <InputLabel htmlFor="grouped-select">City</InputLabel>
+            <Select
+              onChange={async (e) => {
+                await this.dropdownHandler(
+                  "selectedCity",
+                  e.target.value.city_id
+                );
+                this.calcCost(allWeigth);
+              }}
+              defaultValue=""
+              id="grouped-select"
+            >
+              {this.state.cities.map((value, index) => {
+                if (value.province_id === this.state.selectedProv) {
+                  return (
+                    <MenuItem key={index} value={value}>
+                      {value.type} {value.city_name}
+                    </MenuItem>
+                  );
+                } else return null;
+              })}
+            </Select>
+          </StyledFormControl>
+          {this.state.shippingCost.length > 0 ? (
+            <StyledFormControl>
+              <InputLabel htmlFor="grouped-select">Type</InputLabel>
+              <Select
+                onChange={async (e) => {
+                  await this.dropdownHandler("selectedType", e.target.value);
+                  this.setFinalShipCost();
+                }}
+                defaultValue={"REG"}
+                id="grouped-select"
+              >
+                <MenuItem value={"OKE"}>Ongkos Kirim Ekonomis</MenuItem>
+                <MenuItem value={"REG"}>Layanan Reguler</MenuItem>
+              </Select>
+            </StyledFormControl>
+          ) : null}
         </div>
         <div className="pyBtnDiv">
           <button className="declineBtn normalBtn">Continue Payment</button>

@@ -1,5 +1,6 @@
 /* eslint-disable import/no-unresolved */
-import React, { Component, PropTypes } from "react";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 import CurrencyFormat from "react-currency-format";
 import { withRouter } from "react-router-dom";
 import "./styles.sass";
@@ -25,7 +26,7 @@ class AddItemPage extends Component {
   async close() {
     const data = {
       total: this.state.total,
-      id: this.props.item.item_id
+      id: this.props.item.item_id,
     };
     await localStorage.setItem(
       `item_${this.props.item.item_id}`,
@@ -50,7 +51,7 @@ class AddItemPage extends Component {
     return (
       <div
         className="addItemWrapper"
-        ref={node => {
+        ref={(node) => {
           this.modalWrapper = node;
         }}
       >
@@ -75,7 +76,7 @@ class AddItemPage extends Component {
                   decimalSeparator=","
                   prefix={"Rp."}
                   suffix={",-"}
-                  renderText={value => <p>{value}</p>}
+                  renderText={(value) => <p>{value}</p>}
                 />
               </div>
               <div className="priceWrapper">
@@ -128,7 +129,7 @@ class AddItemPage extends Component {
               onClick={async () => {
                 await this.close();
                 this.props.history.push({
-                  pathname: `/cart`
+                  pathname: `/cart`,
                 });
               }}
             >
@@ -151,7 +152,7 @@ class AddItemPage extends Component {
 
 AddItemPage.propTypes = {
   close: PropTypes.func,
-  openClass: PropTypes.string
+  openClass: PropTypes.string,
 };
 
 export default withRouter(AddItemPage);

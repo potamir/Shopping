@@ -15,6 +15,7 @@ import AdminMan from "./components/AdminMan/index";
 import AdPage from "./components/AdPage/index";
 import AdPageMan from "./components/AdPageMan/index";
 import SignUp from "./components/SignUp/index";
+import Origin from "./components/Origin/index";
 
 class Routes extends Component {
   render() {
@@ -33,6 +34,7 @@ class Routes extends Component {
           <Route path="/AdPage" component={AdPage} />
           <Route path="/AdPageMan" component={AdPageMan} />
           <Route path="/SignUp" component={SignUp} />
+          <Route path="/Origin" component={Origin} />
           <Route component={ErrorPage} />
         </Switch>
       </main>

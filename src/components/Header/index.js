@@ -61,6 +61,13 @@ class Header extends Component {
           >
             Advertisement
           </NavLink>
+          <NavLink
+            to="/origin"
+            activeClassName="activeNavLink"
+            className="navLink"
+          >
+            Origin
+          </NavLink>
           {mq.matches ? (
             <NavLink
               to="/cart"
@@ -148,7 +155,7 @@ class Header extends Component {
     localStorage.removeItem("userData");
     this.props.history.push({
       pathname: `/login`,
-      state: "logout"
+      state: "logout",
     });
   }
 
