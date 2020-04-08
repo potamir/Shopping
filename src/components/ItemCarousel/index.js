@@ -3,7 +3,9 @@ import React, { Component } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./styles.sass";
+import * as constant from "../constant.js";
 
+const imgsrc = constant.IMGSRC;
 let mq = window.matchMedia("(max-width: 768px)");
 
 class ItemCarousel extends Component {
@@ -38,7 +40,10 @@ class ItemCarousel extends Component {
         {_props.data.map((value, index) => {
           return (
             <div key={index} className={"img_div"}>
-              <img className={"item_caro"} src={value.carousel_img} />
+              <img
+                className={"item_caro"}
+                src={`${imgsrc}${value.carousel_img}`}
+              />
               {/*<p className="legend">{value.carousel_text}</p> */}
             </div>
           );

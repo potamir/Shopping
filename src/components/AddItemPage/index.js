@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import CurrencyFormat from "react-currency-format";
 import { withRouter } from "react-router-dom";
 import "./styles.sass";
+import * as constant from "../constant.js";
+const imgsrc = constant.IMGSRC;
 
 class AddItemPage extends Component {
   constructor(props) {
@@ -63,7 +65,7 @@ class AddItemPage extends Component {
           <div className="itemWrapper">
             <div className="itemPicWrapper">
               <div className="img">
-                <img src={_props.item.img} className="addImage" />
+                <img src={`${imgsrc}${_props.item.img}`} className="addImage" />
               </div>
             </div>
             <div className="itemInfoWrapper">

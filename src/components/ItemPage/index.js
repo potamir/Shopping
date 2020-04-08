@@ -4,12 +4,14 @@ import AddItemPage from "../AddItemPage/index";
 import CurrencyFormat from "react-currency-format";
 import { withRouter, Link } from "react-router-dom";
 import "./styles.sass";
+import * as constant from "../constant.js";
+const imgsrc = constant.IMGSRC;
 
 class ItemPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      modalOpened: false
+      modalOpened: false,
     };
     this.openModal = this.openModal.bind(this);
   }
@@ -41,7 +43,7 @@ class ItemPage extends Component {
     const loggedIn = await JSON.parse(localStorage.getItem("userData"));
     if (!loggedIn)
       this.props.history.push({
-        pathname: `/login`
+        pathname: `/login`,
       });
     const scrollBar = document.querySelector(".scrollbar-measure");
     const scrollBarWidth = scrollBar.offsetWidth - scrollBar.clientWidth;
@@ -55,17 +57,17 @@ class ItemPage extends Component {
     const passedData = this.props.location.state;
     if (passedData._from === "tags") _path = "TagsItemPage";
     return (
-      <div className="itemPageWrapper" ref={ref => (this.itemPageRef = ref)}>
+      <div className="itemPageWrapper" ref={(ref) => (this.itemPageRef = ref)}>
         {this.getModal()}
         <div className="itemImgWrapper">
-          <img src={passedData.item.img} className="itemImg" />
+          <img src={`${imgsrc}${passedData.item.img}`} className="itemImg" />
         </div>
         <div className="itemInfoWrapper">
           <Link
             className="backLink"
             to={{
               pathname: `/${_path}`,
-              query: { param: true, component: "itempage" }
+              query: { param: true, component: "itempage" },
             }}
           >
             <span className="small">
@@ -90,7 +92,7 @@ class ItemPage extends Component {
             decimalSeparator=","
             prefix={"Rp."}
             suffix={",-"}
-            renderText={value => <p className="itemCost frm">{value}</p>}
+            renderText={(value) => <p className="itemCost frm">{value}</p>}
           />
           <p className="description">{passedData.item.description}</p>
           <button
