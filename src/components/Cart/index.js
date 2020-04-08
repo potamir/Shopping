@@ -41,6 +41,8 @@ class Cart extends Component {
     this.dropdownHandler = this.dropdownHandler.bind(this);
     this.calcCost = this.calcCost.bind(this);
     this.setFinalShipCost = this.setFinalShipCost.bind(this);
+    this.insertPayment = this.insertPayment.bind(this);
+    this.deleteItemsOnCart = this.deleteItemsOnCart.bind(this);
   }
   async componentDidMount() {
     const loggedIn = await JSON.parse(localStorage.getItem("userData"));
@@ -111,6 +113,45 @@ class Cart extends Component {
           this.setFinalShipCost();
         } else console.log(responseJson.result);
       });
+  }
+
+  async insertPayment(total) {
+    const _state = this.state;
+    const _props = this.props;
+    if (_state.data.length > 0 && _state.selectedCity && total > 0) {
+      const user = await JSON.parse(localStorage.getItem("userData"));
+      await fetch(`http://${address}/payment_post`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.user_id,
+          totalPayment: total,
+          userOrigin: _state.selectedCity,
+          paymentStatus: "Waiting Payment",
+          itemsOnCart: JSON.stringify(_state.data),
+        }),
+      })
+        .then((response) => response.json())
+        .then(async (responseJson) => {
+          if (responseJson.status === "success") {
+            await this.deleteItemsOnCart();
+            _props.history.push({
+              pathname: `/PaymentPage`,
+            });
+          } else console.log("error");
+        });
+    } else console.log("not valid");
+  }
+
+  deleteItemsOnCart() {
+    const data = this.state.data;
+    for (let i = 0; i < data.length; i++) {
+      const itemId = `item_${data[i].item_id}`;
+      localStorage.removeItem(itemId);
+    }
   }
 
   async setItems() {
@@ -202,6 +243,11 @@ class Cart extends Component {
               </div>
             );
           })}
+          {this.state.data.length > 0 ? null : (
+            <div className="emptyCartListDiv">
+              <p className='emptyCartContent'>*Empty Cart*</p>
+            </div>
+          )}
         </div>
         <div className="paginationContainer cartPaginationContainer">
           <Pagination
@@ -339,7 +385,12 @@ class Cart extends Component {
           ) : null}
         </div>
         <div className="pyBtnDiv">
-          <button className="declineBtn normalBtn">Continue Payment</button>
+          <button
+            className="declineBtn normalBtn"
+            onClick={() => this.insertPayment(allTotal)}
+          >
+            Continue Payment
+          </button>
         </div>
       </div>
     );

@@ -92,7 +92,7 @@ class SignUp extends Component {
         } else
           this.setState({
             modalIsOpen: true,
-            modalMsg: "Username already taken"
+            modalMsg: "Username is already taken"
           });
       } else
         this.setState({
@@ -102,7 +102,7 @@ class SignUp extends Component {
     } else
       this.setState({
         modalIsOpen: true,
-        modalMsg: "Fill all requirement"
+        modalMsg: "Fill all requirements"
       });
   }
 
