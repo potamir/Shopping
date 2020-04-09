@@ -33,6 +33,17 @@ class Origin extends Component {
   }
 
   async componentDidMount() {
+    const loggedIn = await JSON.parse(localStorage.getItem("userData"));
+    if (!loggedIn)
+      this.props.history.push({
+        pathname: `/`,
+      });
+    else {
+      if (loggedIn.status !== "admin")
+        this.props.history.push({
+          pathname: `/`,
+        });
+    }
     await this.getOrigin();
     this.getProv();
   }

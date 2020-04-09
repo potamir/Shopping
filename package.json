@@ -2,6 +2,7 @@
   "name": "CoutureHijaab",
   "version": "0.1.0",
   "description": "A beautiful e-commerce template with a flat design.",
+  "proxy": "http://couturehijaab.id",
   "engines": {
     "npm": ">=3"
   },

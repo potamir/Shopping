@@ -32,6 +32,17 @@ class AdminMan extends Component {
   }
 
   async componentDidMount() {
+    const loggedIn = await JSON.parse(localStorage.getItem("userData"));
+    if (!loggedIn)
+      this.props.history.push({
+        pathname: `/`,
+      });
+    else {
+      if (loggedIn.status !== "admin")
+        this.props.history.push({
+          pathname: `/`,
+        });
+    }
     const status = this.props.location.state
       ? this.props.location.state.status
       : "curr";

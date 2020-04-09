@@ -13,7 +13,6 @@ class Header extends Component {
     this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
     this.logOut = this.logOut.bind(this);
     this.setNav = this.setNav.bind(this);
-    this.checkLoginStatus = this.checkLoginStatus.bind(this);
   }
 
   componentWillMount() {
@@ -30,7 +29,7 @@ class Header extends Component {
       </button>
     );
 
-    this.loggedInMenu = (
+    this.adminLogin = (
       <div className="menu">
         <div className="innerMenu innerMenuDirection1">
           <NavLink
@@ -79,6 +78,56 @@ class Header extends Component {
               activeClassName="activeNavLink"
               className="navLink"
             >
+              LIST
+            </NavLink>
+          ) : null}
+          {mq.matches ? (
+            <NavLink
+              to="/login"
+              activeClassName="activeNavLink"
+              className="navLink"
+            >
+              Log Out
+            </NavLink>
+          ) : null}
+        </div>
+        {!mq.matches ? (
+          <div className="innerMenu innerMenuDirection2">
+            <NavLink
+              to="/cart"
+              activeClassName="activeNavLink"
+              className="cartMenu navLink"
+            >
+              LIST
+            </NavLink>
+          </div>
+        ) : null}
+      </div>
+    );
+
+    this.userLogin = (
+      <div className="menu">
+        <div className="innerMenu innerMenuDirection1">
+          <NavLink
+            to="/admin"
+            activeClassName="activeNavLink"
+            className="navLink"
+          >
+            Profile
+          </NavLink>
+          <NavLink
+            to="/adminman"
+            activeClassName="activeNavLink"
+            className="navLink"
+          >
+            History
+          </NavLink>
+          {mq.matches ? (
+            <NavLink
+              to="/cart"
+              activeClassName="activeNavLink"
+              className="navLink"
+            >
               CART
             </NavLink>
           ) : null}
@@ -123,14 +172,6 @@ class Header extends Component {
     this.forceUpdate();
   }
 
-  checkLoginStatus() {
-    // const loggedIn = JSON.parse(localStorage.getItem("userData"));
-    // if (!loggedIn)
-    //   browserHistory.push({
-    //     pathname: `/login`
-    //   });
-  }
-
   setMenuState(width) {
     if (this.previousWidth !== width) {
       if (width > 768) {
@@ -147,8 +188,11 @@ class Header extends Component {
   }
 
   setNav() {
-    // check for auth here
-    this.setState({ nav: this.loggedInMenu });
+    const status = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).status
+      : false;
+    if (status === "admin") this.setState({ nav: this.adminLogin });
+    else this.setState({ nav: this.userLogin });
   }
 
   logOut() {
@@ -181,7 +225,7 @@ class Header extends Component {
         <div className={"header_logodiv"}>
           <img
             className={"header_logo"}
-            src={'http://images.couturehijaab.id/logo.png'}
+            src={"http://images.couturehijaab.id/logo.png"}
           />
         </div>
         {this.state.menuActive ? this.menuButton : ""}

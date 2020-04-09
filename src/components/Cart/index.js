@@ -132,6 +132,7 @@ class Cart extends Component {
           userOrigin: _state.selectedCity,
           paymentStatus: "Waiting Payment",
           itemsOnCart: JSON.stringify(_state.data),
+          paymentType: _state.selectedType,
         }),
       })
         .then((response) => response.json())
@@ -245,7 +246,7 @@ class Cart extends Component {
           })}
           {this.state.data.length > 0 ? null : (
             <div className="emptyCartListDiv">
-              <p className='emptyCartContent'>*Empty Cart*</p>
+              <p className="emptyCartContent">*Empty Cart*</p>
             </div>
           )}
         </div>
@@ -343,30 +344,32 @@ class Cart extends Component {
               })}
             </Select>
           </StyledFormControl>
-          <StyledFormControl>
-            <InputLabel htmlFor="grouped-select">City</InputLabel>
-            <Select
-              onChange={async (e) => {
-                await this.dropdownHandler(
-                  "selectedCity",
-                  e.target.value.city_id
-                );
-                this.calcCost(allWeigth);
-              }}
-              defaultValue=""
-              id="grouped-select"
-            >
-              {this.state.cities.map((value, index) => {
-                if (value.province_id === this.state.selectedProv) {
-                  return (
-                    <MenuItem key={index} value={value}>
-                      {value.type} {value.city_name}
-                    </MenuItem>
+          {this.state.selectedProv.length > 0 ? (
+            <StyledFormControl>
+              <InputLabel htmlFor="grouped-select">City</InputLabel>
+              <Select
+                onChange={async (e) => {
+                  await this.dropdownHandler(
+                    "selectedCity",
+                    e.target.value.city_id
                   );
-                } else return null;
-              })}
-            </Select>
-          </StyledFormControl>
+                  this.calcCost(allWeigth);
+                }}
+                defaultValue=""
+                id="grouped-select"
+              >
+                {this.state.cities.map((value, index) => {
+                  if (value.province_id === this.state.selectedProv) {
+                    return (
+                      <MenuItem key={index} value={value}>
+                        {value.type} {value.city_name}
+                      </MenuItem>
+                    );
+                  } else return null;
+                })}
+              </Select>
+            </StyledFormControl>
+          ) : null}
           {this.state.shippingCost.length > 0 ? (
             <StyledFormControl>
               <InputLabel htmlFor="grouped-select">Type</InputLabel>

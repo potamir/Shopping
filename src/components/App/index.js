@@ -26,6 +26,7 @@ class App extends Component {
     })
       .then((response) => response.json())
       .then(async (responseJson) => {
+        console.log(responseJson);
         await localStorage.setItem("mainman", JSON.stringify(responseJson[0]));
       });
   }

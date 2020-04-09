@@ -20,7 +20,7 @@ class SignUp extends Component {
       phone: [""],
       unameStatus: false,
       modalIsOpen: false,
-      modalMsg: ""
+      modalMsg: "",
     };
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
     this.submitItem = this.submitItem.bind(this);
@@ -46,14 +46,14 @@ class SignUp extends Component {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userName: data.uname
-      })
+        userName: data.uname,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         await this.setState({ unameStatus: responseJson.status });
       });
   }
@@ -74,35 +74,47 @@ class SignUp extends Component {
             method: "POST",
             headers: {
               Accept: "application/json",
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               userName: data.uname,
               password: newPass.toString(),
               userFull: data.fname,
-              userAdd: data.address,
-              userPos: data.postal.toString(),
-              userPhone: data.phone.toString()
-            })
+              userAdd: data.address[0],
+              userPos: data.postal[0].toString(),
+              userPhone: data.phone[0].toString(),
+            }),
           })
-            .then(response => response.json())
-            .then(async responseJson => {
-              if (responseJson.status === "success") window.location.reload();
+            .then((response) => response.json())
+            .then(async (responseJson) => {
+              if (responseJson.status === "success")
+                this.props.history.push({
+                  pathname: `/login`,
+                  state: "loggedin",
+                });
+            })
+            .catch((err) => {
+              console.log(err);
+              this.setState({
+                modalIsOpen: true,
+                modalMsg:
+                  "Error to register the data. Try to not use any special character on input box",
+              });
             });
         } else
           this.setState({
             modalIsOpen: true,
-            modalMsg: "Username is already taken"
+            modalMsg: "Username is already taken",
           });
       } else
         this.setState({
           modalIsOpen: true,
-          modalMsg: "Password doesn't match"
+          modalMsg: "Password doesn't match",
         });
     } else
       this.setState({
         modalIsOpen: true,
-        modalMsg: "Fill all requirements"
+        modalMsg: "Fill all requirements",
       });
   }
 
@@ -129,10 +141,10 @@ class SignUp extends Component {
           <p>*USERNAME :</p>
           <input
             style={{
-              backgroundColor: this.state.unameStatus ? "#ec6060" : null
+              backgroundColor: this.state.unameStatus ? "#ec6060" : null,
             }}
             placeholder="Unique Username"
-            onChange={e => this.inputChangeHandler(e, "uname")}
+            onChange={(e) => this.inputChangeHandler(e, "uname")}
             value={this.state.uname}
           />
         </div>
@@ -140,7 +152,7 @@ class SignUp extends Component {
           <p>*FULL NAME :</p>
           <input
             placeholder="First and Last Name"
-            onChange={e => this.inputChangeHandler(e, "fname")}
+            onChange={(e) => this.inputChangeHandler(e, "fname")}
             value={this.state.fname}
           />
         </div>
@@ -149,7 +161,7 @@ class SignUp extends Component {
           <input
             type="password"
             placeholder="Password"
-            onChange={e => this.inputChangeHandler(e, "pass")}
+            onChange={(e) => this.inputChangeHandler(e, "pass")}
             value={this.state.pass}
           />
         </div>
@@ -158,7 +170,7 @@ class SignUp extends Component {
           <input
             type="password"
             placeholder="Confirm Password"
-            onChange={e => this.inputChangeHandler(e, "repass")}
+            onChange={(e) => this.inputChangeHandler(e, "repass")}
             value={this.state.repass}
           />
         </div>
@@ -167,7 +179,7 @@ class SignUp extends Component {
           <textarea
             className="DescTx"
             placeholder="User Address"
-            onChange={e => this.inputChangeHandler(e, "address")}
+            onChange={(e) => this.inputChangeHandler(e, "address")}
             value={this.state.address}
           />
         </div>
@@ -175,7 +187,7 @@ class SignUp extends Component {
           <p>POSTAL :</p>
           <input
             placeholder="Postal code"
-            onChange={e => this.inputChangeHandler(e, "postal")}
+            onChange={(e) => this.inputChangeHandler(e, "postal")}
             value={this.state.postal}
           />
         </div>
@@ -183,7 +195,7 @@ class SignUp extends Component {
           <p>*PHONE :</p>
           <input
             placeholder="Phone Number"
-            onChange={e => this.inputChangeHandler(e, "phone")}
+            onChange={(e) => this.inputChangeHandler(e, "phone")}
             value={this.state.phone}
           />
         </div>

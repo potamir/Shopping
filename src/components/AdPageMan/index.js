@@ -14,14 +14,25 @@ class AdPageMan extends Component {
     this.state = {
       pictures: [],
       adDesc: [],
-      adPhone: []
+      adPhone: [],
     };
     this.onDrop = this.onDrop.bind(this);
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
     this.submitItem = this.submitItem.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const loggedIn = await JSON.parse(localStorage.getItem("userData"));
+    if (!loggedIn)
+      this.props.history.push({
+        pathname: `/`,
+      });
+    else {
+      if (loggedIn.status !== "admin")
+        this.props.history.push({
+          pathname: `/`,
+        });
+    }
     this.getItem();
   }
 
@@ -32,16 +43,16 @@ class AdPageMan extends Component {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         adImg: data.pictures[0],
         adTxt: data.adDesc,
-        adPhn: data.adPhone
-      })
+        adPhn: data.adPhone,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         console.log(responseJson);
         if (responseJson.status === "success") window.location.reload();
       });
@@ -52,15 +63,15 @@ class AdPageMan extends Component {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         this.setState({
           pictures: [responseJson[0].ad_img],
           adDesc: [responseJson[0].ad_msg],
-          adPhone: [responseJson[0].ad_phone]
+          adPhone: [responseJson[0].ad_phone],
         });
       });
   }
@@ -70,7 +81,7 @@ class AdPageMan extends Component {
     const options = {
       maxSizeMB: 0.05,
       maxWidthOrHeight: 640,
-      useWebWorker: true
+      useWebWorker: true,
     };
     try {
       const compressedFile = await imageCompression(picture[0], options);
@@ -85,7 +96,7 @@ class AdPageMan extends Component {
     }
     await this.setState({ preview: false });
     this.setState({
-      preview: true
+      preview: true,
     });
   }
   inputChangeHandler(e, _state) {
@@ -113,7 +124,7 @@ class AdPageMan extends Component {
           <p>Phone Number</p>
           <input
             placeholder="08xxxxxx"
-            onChange={e => this.inputChangeHandler(e, "adPhone")}
+            onChange={(e) => this.inputChangeHandler(e, "adPhone")}
             value={this.state.adPhone}
           />
         </div>
@@ -122,7 +133,7 @@ class AdPageMan extends Component {
           <textarea
             className="DescTx"
             placeholder="Advertisement Text"
-            onChange={e => this.inputChangeHandler(e, "adDesc")}
+            onChange={(e) => this.inputChangeHandler(e, "adDesc")}
             value={this.state.adDesc}
           />
         </div>
