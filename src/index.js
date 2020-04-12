@@ -1,12 +1,15 @@
 /* eslint-disable import/no-unresolved */
-import React from 'react';
-import { render } from 'react-dom';
-import { Router, browserHistory } from 'react-router';
+import React from "react";
+import ReactDOM from "react-dom";
+import { HashRouter } from "react-router-dom";
+import App from "./components/App/index";
 
-import routes from './routes';
+import "./styles/global.sass";
+import "./favicon.ico";
 
-import './styles/global.sass';
-import './favicon.ico';
-
-
-render(<Router history={browserHistory} routes={routes} />, document.getElementById('app'));
+ReactDOM.render(
+  <HashRouter>
+    <App />
+  </HashRouter>,
+  document.getElementById("app")
+);

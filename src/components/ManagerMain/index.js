@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-// import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 import "./styles.sass";
 import ImageUploader from "react-images-upload";
 import * as constant from "../constant.js";
@@ -21,13 +21,24 @@ class ManagerMain extends Component {
       tag4: [],
       carousel_imgs: [],
       tag_imgs: [],
-      preview: true
+      preview: true,
     };
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
     this.submitItem = this.submitItem.bind(this);
   }
 
   async componentDidMount() {
+    const loggedIn = await JSON.parse(localStorage.getItem("userData"));
+    if (!loggedIn)
+      this.props.history.push({
+        pathname: `/`,
+      });
+    else {
+      if (loggedIn.status !== "admin")
+        this.props.history.push({
+          pathname: `/`,
+        });
+    }
     await this.getItem();
   }
 
@@ -36,7 +47,7 @@ class ManagerMain extends Component {
     const options = {
       maxSizeMB: 1,
       maxWidthOrHeight: 1024,
-      useWebWorker: true
+      useWebWorker: true,
     };
     try {
       const compressedFile = await imageCompression(picture[0], options);
@@ -51,7 +62,7 @@ class ManagerMain extends Component {
     }
     await this.setState({ preview: false });
     this.setState({
-      preview: true
+      preview: true,
     });
   }
 
@@ -71,11 +82,11 @@ class ManagerMain extends Component {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         await this.state.carousel_imgs.push(
           [responseJson[0].carousel_img1],
           [responseJson[0].carousel_img2],
@@ -95,7 +106,7 @@ class ManagerMain extends Component {
           tag1: [responseJson[0].tag1_text],
           tag2: [responseJson[0].tag2_text],
           tag3: [responseJson[0].tag3_text],
-          tag4: [responseJson[0].tag4_text]
+          tag4: [responseJson[0].tag4_text],
         });
       });
   }
@@ -107,7 +118,7 @@ class ManagerMain extends Component {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         contact: data.contact,
@@ -124,11 +135,11 @@ class ManagerMain extends Component {
         tagImg1: data.tag_imgs[0],
         tagImg2: data.tag_imgs[1],
         tagImg3: data.tag_imgs[2],
-        tagImg4: data.tag_imgs[3]
-      })
+        tagImg4: data.tag_imgs[3],
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         console.log(responseJson);
         if (responseJson.status === "success") {
           window.location.reload(true);
@@ -196,7 +207,7 @@ class ManagerMain extends Component {
             <p>TAG 1 :</p>
             <input
               placeholder="Tag of Component"
-              onChange={e => this.inputChangeHandler(e, "tag1")}
+              onChange={(e) => this.inputChangeHandler(e, "tag1")}
               value={this.state.tag1}
             />
           </div>
@@ -204,7 +215,7 @@ class ManagerMain extends Component {
             <p>TAG 2 :</p>
             <input
               placeholder="Tag of Component"
-              onChange={e => this.inputChangeHandler(e, "tag2")}
+              onChange={(e) => this.inputChangeHandler(e, "tag2")}
               value={this.state.tag2}
             />
           </div>
@@ -212,7 +223,7 @@ class ManagerMain extends Component {
             <p>TAG 3 :</p>
             <input
               placeholder="Tag of Component"
-              onChange={e => this.inputChangeHandler(e, "tag3")}
+              onChange={(e) => this.inputChangeHandler(e, "tag3")}
               value={this.state.tag3}
             />
           </div>
@@ -220,7 +231,7 @@ class ManagerMain extends Component {
             <p>TAG 4 :</p>
             <input
               placeholder="Tag of Component"
-              onChange={e => this.inputChangeHandler(e, "tag4")}
+              onChange={(e) => this.inputChangeHandler(e, "tag4")}
               value={this.state.tag4}
             />
           </div>
@@ -279,7 +290,7 @@ class ManagerMain extends Component {
           <textarea
             className="DescTx"
             placeholder="Footer Contact Text"
-            onChange={e => this.inputChangeHandler(e, "contact")}
+            onChange={(e) => this.inputChangeHandler(e, "contact")}
             value={this.state.contact}
           />
         </div>
@@ -288,7 +299,7 @@ class ManagerMain extends Component {
           <textarea
             className="DescTx"
             placeholder="Footer About Text"
-            onChange={e => this.inputChangeHandler(e, "about")}
+            onChange={(e) => this.inputChangeHandler(e, "about")}
             value={this.state.about}
           />
         </div>
@@ -297,7 +308,7 @@ class ManagerMain extends Component {
           <textarea
             className="DescTx"
             placeholder="Footer Help Text"
-            onChange={e => this.inputChangeHandler(e, "help")}
+            onChange={(e) => this.inputChangeHandler(e, "help")}
             value={this.state.help}
           />
         </div>
@@ -311,4 +322,4 @@ class ManagerMain extends Component {
   }
 }
 
-export default ManagerMain;
+export default withRouter(ManagerMain);

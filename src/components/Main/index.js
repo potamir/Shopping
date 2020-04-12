@@ -4,7 +4,7 @@ import "./styles.sass";
 import Item from "../Item/index";
 import ItemNew from "../ItemNew/index";
 import ItemCarousel from "../ItemCarousel/index";
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 import * as constant from "../constant.js";
 
 const address = constant.ENDPOINT;
@@ -20,10 +20,7 @@ class Homepage extends Component {
   async componentDidMount() {
     console.log(localStorage);
     const status = this.props.location.state;
-    browserHistory.push({
-      pathname: `/`,
-      state: "loggedin"
-    });
+    this.props.history.push({ pathname: "/", state: "loggedin" });
     if (status === "login") window.location.reload();
     // const loggedIn = await JSON.parse(localStorage.getItem("userData"));
     // if (!loggedIn)
@@ -31,9 +28,14 @@ class Homepage extends Component {
     //     pathname: `/login`
     //   });
     let newRefPos = this.itemNewRef.offsetTop;
-    if (this.props.location.query.component === "tags")
+    if (
+      this.props.location.query
+        ? this.props.location.query.component === "tags"
+        : false
+    )
       newRefPos = this.itemTagsRef.offsetTop;
-    if (this.props.location.query.param) window.scrollTo(0, newRefPos);
+    if (this.props.location.query ? this.props.location.query.param : false)
+      window.scrollTo(0, newRefPos);
     document.querySelector(".menu").classList.remove("open");
     await this.getMainman();
     this.getItem();
@@ -100,7 +102,7 @@ class Homepage extends Component {
 
   render() {
     return (
-      <main className="main">
+      <div className="main">
         <ItemCarousel data={this.state.data} />
         <div className="innerMain">
           <div className="itemDiv" ref={ref => (this.itemTagsRef = ref)}>
@@ -117,9 +119,9 @@ class Homepage extends Component {
             ))}
           </div>
         </div>
-      </main>
+      </div>
     );
   }
 }
 
-export default Homepage;
+export default withRouter(Homepage);

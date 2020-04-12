@@ -1,8 +1,11 @@
 /* eslint-disable import/no-unresolved */
-import React, { Component, PropTypes } from "react";
-import { browserHistory } from "react-router";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 import CurrencyFormat from "react-currency-format";
+import { withRouter } from "react-router-dom";
 import "./styles.sass";
+import * as constant from "../constant.js";
+const imgsrc = constant.IMGSRC;
 
 class AddItemPage extends Component {
   constructor(props) {
@@ -25,7 +28,7 @@ class AddItemPage extends Component {
   async close() {
     const data = {
       total: this.state.total,
-      id: this.props.item.item_id
+      id: this.props.item.item_id,
     };
     await localStorage.setItem(
       `item_${this.props.item.item_id}`,
@@ -50,7 +53,7 @@ class AddItemPage extends Component {
     return (
       <div
         className="addItemWrapper"
-        ref={node => {
+        ref={(node) => {
           this.modalWrapper = node;
         }}
       >
@@ -62,7 +65,7 @@ class AddItemPage extends Component {
           <div className="itemWrapper">
             <div className="itemPicWrapper">
               <div className="img">
-                <img src={_props.item.img1} className="addImage" />
+                <img src={`${imgsrc}${_props.item.img}`} className="addImage" />
               </div>
             </div>
             <div className="itemInfoWrapper">
@@ -75,7 +78,7 @@ class AddItemPage extends Component {
                   decimalSeparator=","
                   prefix={"Rp."}
                   suffix={",-"}
-                  renderText={value => <p>{value}</p>}
+                  renderText={(value) => <p>{value}</p>}
                 />
               </div>
               <div className="priceWrapper">
@@ -127,8 +130,8 @@ class AddItemPage extends Component {
               className="saveItemBtn"
               onClick={async () => {
                 await this.close();
-                browserHistory.push({
-                  pathname: `/cart`
+                this.props.history.push({
+                  pathname: `/cart`,
                 });
               }}
             >
@@ -151,7 +154,7 @@ class AddItemPage extends Component {
 
 AddItemPage.propTypes = {
   close: PropTypes.func,
-  openClass: PropTypes.string
+  openClass: PropTypes.string,
 };
 
-export default AddItemPage;
+export default withRouter(AddItemPage);

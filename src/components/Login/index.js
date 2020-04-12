@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 import passwordHash from "password-hash";
 import Popup from "../Popup/index.js";
 import "./styles.sass";
@@ -14,18 +14,19 @@ class Login extends Component {
       uname: [""],
       pass: [""],
       modalIsOpen: false,
-      modalMsg: ""
+      modalMsg: "",
     };
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
     this.logIn = this.logIn.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
+    this.signUp = this.signUp.bind(this);
   }
   componentDidMount() {
     const status = this.props.location.state;
-    browserHistory.push({
+    this.props.history.push({
       pathname: `/login`,
-      state: "loggedout"
+      state: "loggedout",
     });
     if (status === "logout") window.location.reload();
     document.body.scrollTop = 0;
@@ -39,8 +40,8 @@ class Login extends Component {
   }
 
   signUp() {
-    browserHistory.push({
-      pathname: `/signup`
+    this.props.history.push({
+      pathname: `/signup`,
     });
   }
 
@@ -50,14 +51,14 @@ class Login extends Component {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userName: data.uname
-      })
+        userName: data.uname,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         if (responseJson.status) {
           if (
             passwordHash.verify(data.pass[0], responseJson.data[0].password)
@@ -66,9 +67,9 @@ class Login extends Component {
               "userData",
               JSON.stringify(responseJson.data[0])
             );
-            browserHistory.push({
+            this.props.history.push({
               pathname: `/`,
-              state: "login"
+              state: "login",
             });
           } else
             this.setState({ modalMsg: "Wrong Password", modalIsOpen: true });
@@ -99,7 +100,7 @@ class Login extends Component {
           <input
             className="loginInp"
             placeholder="Unique Username"
-            onChange={e => this.inputChangeHandler(e, "uname")}
+            onChange={(e) => this.inputChangeHandler(e, "uname")}
             value={this.state.uname}
           />
         </div>
@@ -109,7 +110,7 @@ class Login extends Component {
             className="loginInp"
             type="password"
             placeholder="User Password"
-            onChange={e => this.inputChangeHandler(e, "pass")}
+            onChange={(e) => this.inputChangeHandler(e, "pass")}
             value={this.state.pass}
           />
         </div>
@@ -126,4 +127,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default withRouter(Login);

@@ -1,12 +1,14 @@
 /* eslint-disable import/no-unresolved */
-import React, { Component, PropTypes } from "react";
-import ReactCSSTransitionGroup from "react-addons-css-transition-group";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { CSSTransitionGroup } from "react-transition-group";
 
 import Header from "../Header/index";
 import Footer from "../Footer/index";
 import "./styles.sass";
 import "../../styles/animation.sass";
 import * as constant from "../constant.js";
+import Routes from "../../routes";
 
 const address = constant.ENDPOINT;
 class App extends Component {
@@ -19,43 +21,29 @@ class App extends Component {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    })
-      .then(response => response.json())
-      .then(async responseJson => {
-        await localStorage.setItem("mainman", JSON.stringify(responseJson[0]));
-      });
-  }
-
-  getShipping() {
-    fetch(`https://api.rajaongkir.com/starter/province?id=12`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
         "Content-Type": "application/json",
-        key: "8df3fc61dbed2cccecd359a4ed17eb38"
-      }
+      },
     })
-      .then(response => response.json())
-      .then(async responseJson => {
-        console.log("prov", responseJson);
+      .then((response) => response.json())
+      .then(async (responseJson) => {
+        console.log(responseJson);
+        await localStorage.setItem("mainman", JSON.stringify(responseJson[0]));
       });
   }
 
   render() {
     return (
       <div className="wrapper">
-        {this.props.location.pathname === "/adPage" ? null : <Header />}
-        <ReactCSSTransitionGroup
+        <Header />
+        <CSSTransitionGroup
           transitionName="content"
           transitionEnterTimeout={500}
           transitionLeaveTimeout={300}
         >
-          <div key={this.props.location.pathname} className="appMain">
-            {this.props.children}
+          <div className="appMain">
+            <Routes />
           </div>
-        </ReactCSSTransitionGroup>
+        </CSSTransitionGroup>
         <Footer />
       </div>
     );
@@ -65,7 +53,6 @@ class App extends Component {
 App.propTypes = {
   children: PropTypes.element,
   location: PropTypes.object,
-  "location.pathname": PropTypes.string
 };
 
 export default App;

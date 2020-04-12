@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 import "./styles.sass";
 import ImageUploader from "react-images-upload";
 import * as constant from "../constant.js";
@@ -23,7 +23,8 @@ class AdminMan extends Component {
       tag3: [],
       tag4: [],
       status: "",
-      itemId: 0
+      itemId: 0,
+      weight: [],
     };
     this.onDrop = this.onDrop.bind(this);
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
@@ -31,13 +32,23 @@ class AdminMan extends Component {
   }
 
   async componentDidMount() {
+    const loggedIn = await JSON.parse(localStorage.getItem("userData"));
+    if (!loggedIn)
+      this.props.history.push({
+        pathname: `/`,
+      });
+    else {
+      if (loggedIn.status !== "admin")
+        this.props.history.push({
+          pathname: `/`,
+        });
+    }
     const status = this.props.location.state
       ? this.props.location.state.status
       : "curr";
     if (status === "edit") {
       const item = this.props.location.state.item;
       await this.setState({
-        pictures: [[item.img1], [item.img2], [item.img3], [item.img4]],
         preview: true,
         name: [item.name],
         desc: [item.description],
@@ -48,7 +59,8 @@ class AdminMan extends Component {
         tag3: [item.tag3],
         tag4: [item.tag4],
         status: "edit",
-        itemId: item.item_id
+        itemId: item.item_id,
+        weight: [item.weight],
       });
     }
   }
@@ -58,7 +70,7 @@ class AdminMan extends Component {
     const options = {
       maxSizeMB: 0.05,
       maxWidthOrHeight: 640,
-      useWebWorker: true
+      useWebWorker: true,
     };
     try {
       const compressedFile = await imageCompression(picture[0], options);
@@ -73,7 +85,7 @@ class AdminMan extends Component {
     }
     await this.setState({ preview: false });
     this.setState({
-      preview: true
+      preview: true,
     });
   }
 
@@ -90,11 +102,16 @@ class AdminMan extends Component {
 
   async submitItem() {
     const data = this.state;
-    await fetch(`http://${address}/items_post`, {
+    let requestTo = "items_post";
+    const status = this.props.location.state
+      ? this.props.location.state.status
+      : "curr";
+    if (status === "edit") requestTo = "items_post_upd";
+    await fetch(`http://${address}/${requestTo}`, {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         name: data.name[0],
@@ -109,18 +126,16 @@ class AdminMan extends Component {
         tag2: data.tag2,
         tag3: data.tag3,
         tag4: data.tag4,
-        status: data.status,
-        itemId: data.itemId
-      })
+        itemId: data.itemId,
+        weight: data.weight,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         console.log(responseJson);
         if (responseJson.status === "success") {
           if (this.state.status === "edit")
-            browserHistory.push({
-              pathname: `/AdminMan`
-            });
+            this.props.history.push("/AdminMan");
           else window.location.reload();
         }
       });
@@ -135,15 +150,15 @@ class AdminMan extends Component {
             <p>NAME :</p>
             <input
               placeholder="Name of the Product"
-              onChange={e => this.inputChangeHandler(e, "name")}
+              onChange={(e) => this.inputChangeHandler(e, "name")}
               value={this.state.name}
             />
           </div>
           <div className="NPL">
-            <p>PRICE :</p>
+            <p>PRICE(Rupiah) :</p>
             <input
               placeholder="Item Price"
-              onChange={e => this.inputChangeHandler(e, "price")}
+              onChange={(e) => this.inputChangeHandler(e, "price")}
               value={this.state.price}
             />
           </div>
@@ -151,8 +166,16 @@ class AdminMan extends Component {
             <p>TOTAL :</p>
             <input
               placeholder="Total Quantity"
-              onChange={e => this.inputChangeHandler(e, "total")}
+              onChange={(e) => this.inputChangeHandler(e, "total")}
               value={this.state.total}
+            />
+          </div>
+          <div className="NPL">
+            <p>WEIGHT(gram) :</p>
+            <input
+              placeholder="Item Weight"
+              onChange={(e) => this.inputChangeHandler(e, "weight")}
+              value={this.state.weight}
             />
           </div>
         </div>
@@ -207,7 +230,7 @@ class AdminMan extends Component {
           <textarea
             className="DescTx"
             placeholder="Description of Product"
-            onChange={e => this.inputChangeHandler(e, "desc")}
+            onChange={(e) => this.inputChangeHandler(e, "desc")}
             value={this.state.desc}
           />
         </div>
@@ -216,7 +239,7 @@ class AdminMan extends Component {
             <p>TAG 1 :</p>
             <input
               placeholder="Tag of Product"
-              onChange={e => this.inputChangeHandler(e, "tag1")}
+              onChange={(e) => this.inputChangeHandler(e, "tag1")}
               value={this.state.tag1}
             />
           </div>
@@ -224,7 +247,7 @@ class AdminMan extends Component {
             <p>TAG 2 :</p>
             <input
               placeholder="Tag of Product"
-              onChange={e => this.inputChangeHandler(e, "tag2")}
+              onChange={(e) => this.inputChangeHandler(e, "tag2")}
               value={this.state.tag2}
             />
           </div>
@@ -232,7 +255,7 @@ class AdminMan extends Component {
             <p>TAG 3 :</p>
             <input
               placeholder="Tag of Product"
-              onChange={e => this.inputChangeHandler(e, "tag3")}
+              onChange={(e) => this.inputChangeHandler(e, "tag3")}
               value={this.state.tag3}
             />
           </div>
@@ -240,7 +263,7 @@ class AdminMan extends Component {
             <p>TAG 4 :</p>
             <input
               placeholder="Tag of Product"
-              onChange={e => this.inputChangeHandler(e, "tag4")}
+              onChange={(e) => this.inputChangeHandler(e, "tag4")}
               value={this.state.tag4}
             />
           </div>
@@ -257,4 +280,4 @@ class AdminMan extends Component {
   }
 }
 
-export default AdminMan;
+export default withRouter(AdminMan);

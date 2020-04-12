@@ -1,22 +1,8 @@
 @import '../../styles/variables.sass'
 
 .cart
-  max-height: 800px
-  overflow-y: auto
-  overflow-x: hidden
-.itemEa
-  padding: 10px
-  display: flex
-  flex-direction: row
-  align-items: center
-  justify-content: space-between
-  width: 100%
-  background-color: #ddd
-  &:nth-child(even)
-    background-color: #ccc
-  &:hover
-    background-color: #bbb
-    cursor: pointer
+  overflow: hidden
+  
 .buttonDiv
   margin-right: 20px
 .normalBtn
@@ -42,7 +28,7 @@
   border: solid 2px
   &:hover
     background-color: $black
-    color: #fff
+    color: #292424
 .pyBtnDiv
   width: 100%
   display: flex
@@ -59,3 +45,96 @@
   display: flex
   flex-direction: row
   align-items: center
+  height: 100%
+
+.itemEaOnCart
+  display: flex
+  flex-direction: column
+  justify-content: center
+  height: 100%
+  min-width: 500px
+
+.itemsOnCart
+  display: flex
+  flex-direction: row
+  justify-content: flex-start  
+  flex-wrap: wrap
+
+.itemsOnCartDet
+  flex: 1
+  &:hover
+    font-weight: bolder
+
+.itemsOnCartDetPrice
+  flex: 2
+  text-align: center
+  &:hover
+    font-weight: bolder
+
+.totalContainer
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: column
+
+.totalTitle
+  margin-bottom: 20px
+
+.totalFormatCon
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: row
+  width: 30rem
+
+.totalFormat
+  text-align: right
+
+.totalNamFormat
+  flex: 6
+  font-size: 0.9rem
+
+.totalCurFormat
+  flex: 1
+  font-size: 1rem
+
+.totalValFormat
+  flex: 3
+  display: flex
+  justify-content: flex-end
+  align-items: center 
+  font-size: 1rem
+
+.totalDesFormat
+  flex: 3
+  display: flex
+  justify-content: flex-end
+  align-items: center 
+  font-size: 1rem
+
+.totalTotFormat
+  flex: 6
+  font-size: 1rem
+  font-weight: bold
+
+.additionTemp
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: row
+  width: 30rem
+  border-style: solid
+  border-bottom-width: 1px
+
+.emptyCartListDiv
+  display: flex
+  width: 100%
+  align-items: center
+  justify-content: center
+  padding-top: 20px
+  
+.emptyCartContent
+  font-size: 1.2rem
+  &:hover
+    font-weight: bold
+    cursor: pointer

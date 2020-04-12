@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 import "./styles.sass";
 import CurrencyFormat from "react-currency-format";
 // import ImageUploader from "react-images-upload";
@@ -8,6 +8,7 @@ import Pagination from "react-js-pagination";
 import Popup from "../Popup/index.js";
 import * as constant from "../constant.js";
 const address = constant.ENDPOINT;
+const imgsrc = constant.IMGSRC;
 
 const totalInOnePage = 10;
 
@@ -21,7 +22,7 @@ class Admin extends Component {
       totalItems: 0,
       modalIsOpen: false,
       modalMsg: "",
-      selectedItem: ""
+      selectedItem: "",
     };
     this.editItem = this.editItem.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
@@ -31,6 +32,17 @@ class Admin extends Component {
     this.openModal = this.openModal.bind(this);
   }
   async componentDidMount() {
+    const loggedIn = await JSON.parse(localStorage.getItem("userData"));
+    if (!loggedIn)
+      this.props.history.push({
+        pathname: `/`,
+      });
+    else {
+      if (loggedIn.status !== "admin")
+        this.props.history.push({
+          pathname: `/`,
+        });
+    }
     this.getItem(0);
   }
 
@@ -40,7 +52,7 @@ class Admin extends Component {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         tag1: "",
@@ -48,14 +60,14 @@ class Admin extends Component {
         tag3: "",
         tag4: "",
         renderFrom: renderFrom,
-        renderUntil: totalInOnePage
-      })
+        renderUntil: totalInOnePage,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         await this.setState({
           data: responseJson,
-          totalItems: responseJson[0].TotalRows
+          totalItems: responseJson[0].TotalRows,
         });
       });
   }
@@ -66,14 +78,14 @@ class Admin extends Component {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        itemId: this.state.selectedItem
-      })
+        itemId: this.state.selectedItem,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         if (responseJson.status === "success") window.location.reload();
       });
   }
@@ -81,15 +93,16 @@ class Admin extends Component {
   async handlePageChange(pageNumber) {
     console.log(`active page is ${pageNumber}`);
     await this.setState({
-      currPage: pageNumber
+      currPage: pageNumber,
     });
     this.getItem((pageNumber - 1) * totalInOnePage);
   }
 
   async editItem(val) {
-    browserHistory.push({
+    console.log(val);
+    this.props.history.push({
       pathname: `/Admin`,
-      state: { item: val, status: "edit" }
+      state: { item: val, status: "edit" },
     });
   }
 
@@ -105,7 +118,7 @@ class Admin extends Component {
     this.setState({
       selectedItem: val.item_id,
       modalIsOpen: true,
-      modalMsg: `Are you sure want to delete ${val.name}?`
+      modalMsg: `Are you sure want to delete ${val.name}?`,
     });
   }
   render() {
@@ -120,46 +133,48 @@ class Admin extends Component {
           yesCommand={this.deleteItem}
           buttonType={"choice"}
         />
-        {this.state.data.map((value, index) => {
-          return (
-            <div key={index} className="itemEa">
-              <div className="leftDesc">
-                <div className="cImgDiv">
-                  <img src={value.img1} className="cartIcon" />
+        <div className="itemEaWrapper">
+          {this.state.data.map((value, index) => {
+            return (
+              <div key={index} className="itemEa">
+                <div className="leftDesc">
+                  <div className="cImgDiv">
+                    <img src={`${imgsrc}${value.img1}`} className="cartIcon" />
+                  </div>
+                  <div>
+                    <h4>{value.name}</h4>
+                    <p>
+                      {value.total} Item{value.total > 1 ? "s" : null} Left
+                    </p>
+                    <CurrencyFormat
+                      value={value.price}
+                      displayType={"text"}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      prefix={"Rp."}
+                      suffix={",-"}
+                      renderText={(curr_value) => <p>{curr_value}</p>}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <h4>{value.name}</h4>
-                  <p>
-                    {value.total} Item{value.total > 1 ? "s" : null} Left
-                  </p>
-                  <CurrencyFormat
-                    value={value.price}
-                    displayType={"text"}
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    prefix={"Rp."}
-                    suffix={",-"}
-                    renderText={curr_value => <p>{curr_value}</p>}
-                  />
+                <div className="buttonDiv">
+                  <button
+                    className="deleteBtn adminManBtn normalBtn"
+                    onClick={() => this.deleteListedItem(value)}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className="editBtn adminManBtn normalBtn"
+                    onClick={() => this.editItem(value)}
+                  >
+                    Edit
+                  </button>
                 </div>
               </div>
-              <div className="buttonDiv">
-                <button
-                  className="deleteBtn adminManBtn normalBtn"
-                  onClick={() => this.deleteListedItem(value)}
-                >
-                  Delete
-                </button>
-                <button
-                  className="editBtn adminManBtn normalBtn"
-                  onClick={() => this.editItem(value)}
-                >
-                  Edit
-                </button>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
         <div className="paginationContainer">
           <Pagination
             hideDisabled
@@ -176,4 +191,4 @@ class Admin extends Component {
   }
 }
 
-export default Admin;
+export default withRouter(Admin);

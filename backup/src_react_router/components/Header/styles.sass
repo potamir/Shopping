@@ -1,0 +1,103 @@
+@import '../../styles/variables.sass'
+
+.header
+  display: flex
+  padding: 0 0 0 0
+  align-items: center
+  justify-content: center
+
+.header > h1
+  text-align: center
+  flex: 1
+  a
+    text-decoration: none
+    color: #ffb4a2
+    letter-spacing: 4px
+    transition: color .3s
+    font-size: 1.8rem
+    &:active, &:hover
+      color: #b3a39f
+
+.menuBtn
+  margin: 0
+  background: transparent
+  border: none
+  color: #efefef
+  font-size: 1rem
+  line-height: 1.5
+  // change it if making fixed header
+  margin-bottom: 5px
+  &:hover
+    cursor: pointer
+  &:focus, &:active
+    padding: 0
+    outline: none
+  img
+    width: 1.3rem
+    height: 1.3rem
+
+.logoWrapper
+  color: $black
+
+.logo
+  font-size: 1.4rem !important
+  color: #ffb4a2
+  padding: 2px
+  font-weight: bold
+
+header
+  flex-direction: column
+  padding: 0
+  background-color: #111111
+  // padding-top: 20px
+  // width: 100vw
+  // position: absolute
+  // right: 0vw
+
+.header_logodiv
+  display: flex
+  align-items: center
+  justify-content: center
+  height: 80px
+
+.header_logo
+  height: 75px
+  width: auto
+
+.topLeftHeader
+  height: 100%
+
+.menu
+  width: 100%
+  box-sizing: border-box
+  transition: height .3s
+  height: 0
+  overflow: hidden
+
+.menu.open
+  height: 175px
+  margin: 0 0 30px 0
+
+.loginMenu.open
+  height: 50px
+
+.navLink:last-child
+  padding-bottom: 10px
+  border-bottom: solid 1px #efefef
+
+.navLink
+  transition: color .3s
+  color: #a3a3a3
+  display: flex
+  align-items: center
+  justify-content: center
+  font-size: 1rem
+  line-height: 2.5
+  text-transform: uppercase
+  &:hover
+    cursor: pointer
+    color: #ffb4a2
+
+.activeNavLink
+  color: #ffb4a2
+  text-decoration: none

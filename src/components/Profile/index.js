@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-import { browserHistory } from "react-router";
+import { withRouter } from "react-router-dom";
 import BasicInfo from "../BasicInfo/index";
 import OtherInfo from "../OtherInfo/index";
 import "./styles.sass";
@@ -9,7 +9,7 @@ class Profile extends Component {
   async componentDidMount() {
     const loggedIn = await JSON.parse(localStorage.getItem("userData"));
     if (!loggedIn)
-      browserHistory.push({
+      this.props.history.push({
         pathname: `/login`
       });
     document.body.scrollTop = 0;
@@ -25,4 +25,4 @@ class Profile extends Component {
   }
 }
 
-export default Profile;
+export default withRouter(Profile);

@@ -1,9 +1,11 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
 // import {Link} from 'react-router';
-import { browserHistory } from "react-router";
-
+import { withRouter } from "react-router-dom";
 import "./styles.sass";
+import * as constant from "../constant.js";
+
+const imgsrc = constant.IMGSRC;
 
 class Item extends Component {
   render() {
@@ -11,10 +13,10 @@ class Item extends Component {
     return (
       <div className="item">
         <img
-          src={this.props.data.tag_img}
+          src={`${imgsrc}${this.props.data.tag_img}`}
           className="contentItem"
           onClick={() => {
-            browserHistory.push("/TagsItemPage");
+            this.props.history.push("/TagsItemPage");
           }}
         />
       </div>
@@ -22,4 +24,4 @@ class Item extends Component {
   }
 }
 
-export default Item;
+export default withRouter(Item);
