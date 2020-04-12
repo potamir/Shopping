@@ -17,6 +17,7 @@ class Header extends Component {
   }
 
   componentWillMount() {
+    console.log(localStorage);
     mq.addListener(this.mediaQueryChanged);
     this.previousWidth = 0;
     this.menuButton = (
