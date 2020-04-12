@@ -7,16 +7,10 @@ import CurrencyFormat from "react-currency-format";
 import Popup from "../Popup/index.js";
 const address = constant.ENDPOINT;
 
-class PaymentList extends Component {
+class History extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: [],
-      modalIsOpen: false,
-      modalMsg: "",
-      status: "",
-      paymentId: 0,
-    };
+    this.state = { data: [], modalIsOpen: false, modalMsg: "", status: "" };
     this.getAllPayment = this.getAllPayment.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
@@ -29,22 +23,19 @@ class PaymentList extends Component {
       this.props.history.push({
         pathname: `/`,
       });
-    else {
-      if (loggedIn.status !== "admin")
-        this.props.history.push({
-          pathname: `/`,
-        });
-    }
-    this.getAllPayment();
+    this.getAllPayment(loggedIn.user_id);
   }
 
-  async getAllPayment() {
-    await fetch(`http://${address}/payment_get`, {
-      method: "GET",
+  async getAllPayment(userId) {
+    await fetch(`http://${address}/payment_get_user`, {
+      method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        userId: userId,
+      }),
     })
       .then((response) => response.json())
       .then(async (responseJson) => {
@@ -61,8 +52,8 @@ class PaymentList extends Component {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        paymentId: _state.paymentId,
-        status: _state.paymentStatus,
+        paymentId: _state.status,
+        status: "Items Paid",
       }),
     })
       .then((response) => response.json())
@@ -96,14 +87,13 @@ class PaymentList extends Component {
         />
         <div className="itemEaWrapper">
           {this.state.data.map((value, index) => {
-            // const detailsItem = JSON.parse(value.items_oncart);
-            console.log(value);
+            const detailsItem = JSON.parse(value.items_oncart);
             return (
               <div key={index} className="itemEa">
                 <div className="leftDesc">
                   <div className="cImgDiv paymentExp">
                     <div className="paymentDetailsExp">
-                      <h3 className="detailsAlignLeft">Name</h3>
+                      <h3 className="detailsAlignLeft">Count</h3>
                       <p className="detailsAlignLeft">Status</p>
                       <p className="detailsAlignLeft">Type</p>
                     </div>
@@ -111,7 +101,8 @@ class PaymentList extends Component {
                   <div className="paymentEaOncart">
                     <div className="paymentDetails">
                       <h3 className="paymentItemDetails">
-                        {value.user_name}
+                        {detailsItem.length} item
+                        {detailsItem.length > 1 ? "s" : null}
                       </h3>
                       <p className="paymentItemDetails">
                         {value.payment_status}
@@ -135,41 +126,39 @@ class PaymentList extends Component {
                 </div>
                 <div className="buttonDiv">
                   {value.payment_status === "Waiting Payment" ? (
-                    <button className="normalBtn adminManBtn waitBtn">
-                      Waiting Payment
+                    <button
+                      onClick={() =>
+                        this.setState({
+                          modalIsOpen: true,
+                          modalMsg: "Confirm that this items already paid?",
+                          status: value.payment_id,
+                        })
+                      }
+                      className="normalBtn adminManBtn approveBtn"
+                    >
+                      Confirm
                     </button>
                   ) : value.payment_status === "Items Paid" ? (
-                    <button
-                      onClick={() =>
-                        this.setState({
-                          modalIsOpen: true,
-                          modalMsg: "Approve that this items already paid?",
-                          paymentId: value.payment_id,
-                          paymentStatus: "Approved",
-                        })
-                      }
-                      className="normalBtn adminManBtn approveBtn"
-                    >
-                      Approve
+                    <button className="normalBtn adminManBtn waitBtn">
+                      Waiting Approval
                     </button>
                   ) : value.payment_status === "Approved" ? (
-                    <button
-                      onClick={() =>
-                        this.setState({
-                          modalIsOpen: true,
-                          modalMsg: "Approve that this items already paid?",
-                          paymentId: value.payment_id,
-                          paymentStatus: "Process",
-                        })
-                      }
-                      className="normalBtn adminManBtn approveBtn"
-                    >
-                      Process
+                    <button className="normalBtn adminManBtn waitBtn">
+                      Approved
+                    </button>
+                  ) : value.payment_status === "Process" ? (
+                    <button className="normalBtn adminManBtn waitBtn">
+                      Items Being Process
                     </button>
                   ) : null}
                   <button className="normalBtn adminManBtn detailsBtn">
                     Details
                   </button>
+                  {value.payment_status === "Waiting Payment" ? (
+                    <button className="normalBtn adminManBtn deleteBtn">
+                      Cancel
+                    </button>
+                  ) : null}
                 </div>
               </div>
             );
@@ -180,4 +169,4 @@ class PaymentList extends Component {
   }
 }
 
-export default withRouter(PaymentList);
+export default withRouter(History);

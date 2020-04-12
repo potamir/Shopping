@@ -18,6 +18,7 @@ import SignUp from "./components/SignUp/index";
 import Origin from "./components/Origin/index";
 import PaymentPage from "./components/PaymentPage/index";
 import PaymentList from "./components/PaymentList/index";
+import History from "./components/History/index";
 
 class Routes extends Component {
   render() {
@@ -39,6 +40,7 @@ class Routes extends Component {
           <Route path="/Origin" component={Origin} />
           <Route path="/PaymentPage" component={PaymentPage} />
           <Route path="/PaymentList" component={PaymentList} />
+          <Route path="/History" component={History} />
           <Route component={ErrorPage} />
         </Switch>
       </main>

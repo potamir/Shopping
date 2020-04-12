@@ -70,7 +70,7 @@ class Header extends Component {
           </NavLink>
           {mq.matches ? (
             <NavLink
-              to="/cart"
+              to="/PaymentList"
               onClick={async () => {
                 // const loggedIn = await JSON.parse(
                 //   localStorage.getItem("userData")
@@ -95,7 +95,7 @@ class Header extends Component {
         {!mq.matches ? (
           <div className="innerMenu innerMenuDirection2">
             <NavLink
-              to="/cart"
+              to="/PaymentList"
               activeClassName="activeNavLink"
               className="cartMenu navLink"
             >
@@ -117,7 +117,7 @@ class Header extends Component {
             Profile
           </NavLink>
           <NavLink
-            to="/adminman"
+            to="/History"
             activeClassName="activeNavLink"
             className="navLink"
           >
