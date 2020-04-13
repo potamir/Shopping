@@ -24,12 +24,14 @@ class Origin extends Component {
       selectedProvId: "",
       selectedCityId: "",
       selectedProvName: "",
-      selectedCityName: "",
+      selectedCityName: [],
       currProvName: "",
       currCityName: "",
+      paymentDesc: [],
     };
     this.dropdownHandler = this.dropdownHandler.bind(this);
     this.setOrigin = this.setOrigin.bind(this);
+    this.inputChangeHandler = this.inputChangeHandler.bind(this);
   }
 
   async componentDidMount() {
@@ -85,6 +87,7 @@ class Origin extends Component {
         this.setState({
           currProvName: responseJson[0].province_name,
           currCityName: responseJson[0].city_name,
+          paymentDesc: [responseJson[0].payment_desc],
         });
       });
   }
@@ -102,6 +105,7 @@ class Origin extends Component {
         city_id: _state.selectedCityId,
         prov_name: _state.selectedProvName,
         city_name: _state.selectedCityName,
+        payment_desc: _state.paymentDesc[0],
       }),
     })
       .then((response) => response.json())
@@ -111,11 +115,27 @@ class Origin extends Component {
       });
   }
 
+  inputChangeHandler(e) {
+    let newValue = e.target.value;
+    this.state.paymentDesc.splice(0, 1, newValue);
+    this.forceUpdate();
+  }
+
   render() {
     return (
       <div className="OriginMain">
-        <h3 className="OriginTitle">Set Origin Address</h3>
+        <h3 className="OriginTitle">
+          {"Set Origin Address & Payment Description"}
+        </h3>
         <div className="dropdownLocation dropdownOrigin">
+          <div className="OriginPaymentDesc">
+            <textarea
+              className="DescTx"
+              placeholder="Payment Description(contain: Guide user how to do payment, bank account number, etc.)"
+              onChange={(e) => this.inputChangeHandler(e)}
+              value={this.state.paymentDesc}
+            />
+          </div>
           <StyledFormControl>
             <InputLabel htmlFor="grouped-select">Province</InputLabel>
             <Select

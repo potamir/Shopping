@@ -22,10 +22,18 @@ class Popup extends Component {
             <form>
               <input readOnly className="modalInp" />
               <div className="modalButton">
-                <button type="button" className="modalBtn yesBtn" onClick={_props.yesCommand}>
+                <button
+                  type="button"
+                  className="modalBtn yesBtn"
+                  onClick={_props.yesCommand}
+                >
                   Yes
                 </button>
-                <button type="button" className="modalBtn cclBtn" onClick={_props.closeModal}>
+                <button
+                  type="button"
+                  className="modalBtn cclBtn"
+                  onClick={_props.closeModal}
+                >
                   Cancel
                 </button>
               </div>
@@ -35,7 +43,11 @@ class Popup extends Component {
             <form>
               <input readOnly className="modalInp" />
               <div className="modalButton">
-                <button type="button" className="modalBtn cclBtn" onClick={_props.closeModal}>
+                <button
+                  type="button"
+                  className="modalBtn cclBtn"
+                  onClick={_props.closeModal}
+                >
                   Close
                 </button>
               </div>
@@ -55,8 +67,9 @@ const customStyles = {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "300px"
-  }
+    width: "300px",
+    userSelect: "none",
+  },
 };
 
 export default Popup;

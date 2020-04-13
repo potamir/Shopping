@@ -1,33 +1,60 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
+import CurrencyFormat from "react-currency-format";
 import "./styles.sass";
+import * as constant from "../constant.js";
 
+const address = constant.ENDPOINT;
 class PaymentPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { total: 0, paymentDesc: "" };
+    this.getOrigin = this.getOrigin.bind(this);
   }
 
-  async componentDidMount() {}
+  async componentDidMount() {
+    const status = this.props.location.state
+      ? this.props.location.state.status
+      : false;
+    if (status) this.setState({ total: this.props.location.state.total });
+    else
+      this.props.history.push({
+        pathname: `/`,
+      });
+    this.getOrigin();
+  }
+
+  async getOrigin() {
+    await fetch(`http://${address}/origin_get`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then(async (responseJson) => {
+        this.setState({
+          paymentDesc: [responseJson[0].payment_desc],
+        });
+      });
+  }
 
   render() {
     return (
       <div className="paymentMainDiv">
         <h3 className="paymentTitle">Current Payment</h3>
-        <p className="paymentContent">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Velit ut
-          tortor pretium viverra suspendisse potenti nullam ac tortor. Mauris
-          nunc congue nisi vitae suscipit tellus mauris. Ac orci phasellus
-          egestas tellus rutrum tellus pellentesque eu tincidunt. Turpis in eu
-          mi bibendum neque. Interdum varius sit amet mattis vulputate enim.
-          Velit egestas dui id ornare arcu odio ut sem nulla. Faucibus purus in
-          massa tempor nec feugiat nisl pretium fusce. Vivamus arcu felis
-          bibendum ut tristique et egestas. Tempor orci eu lobortis elementum
-          nibh tellus.
-        </p>
-        <p className="paymentTotal">Total:</p>
+        <p className="paymentContent">{this.state.paymentDesc}</p>
+        <CurrencyFormat
+          value={this.state.total}
+          displayType={"text"}
+          thousandSeparator="."
+          decimalSeparator=","
+          prefix={"Rp. "}
+          suffix={",-"}
+          renderText={(total) => <p className="paymentTotal">Total:{total}</p>}
+        />
       </div>
     );
   }

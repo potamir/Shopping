@@ -118,6 +118,10 @@ class Cart extends Component {
   async insertPayment(total) {
     const _state = this.state;
     const _props = this.props;
+    _props.history.push({
+      pathname: `/PaymentPage`,
+      state: { total: total, status: true },
+    });
     if (_state.data.length > 0 && _state.selectedCity && total > 0) {
       const user = await JSON.parse(localStorage.getItem("userData"));
       await fetch(`http://${address}/payment_post`, {
@@ -141,6 +145,7 @@ class Cart extends Component {
             await this.deleteItemsOnCart();
             _props.history.push({
               pathname: `/PaymentPage`,
+              state: { total: total, status: true },
             });
           } else console.log("error");
         });
@@ -390,7 +395,9 @@ class Cart extends Component {
         <div className="pyBtnDiv">
           <button
             className="declineBtn normalBtn"
-            onClick={() => this.insertPayment(allTotal)}
+            onClick={() =>
+              this.insertPayment(allTotal + this.state.finalShipCost)
+            }
           >
             Continue Payment
           </button>

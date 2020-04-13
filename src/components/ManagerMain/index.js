@@ -152,7 +152,6 @@ class ManagerMain extends Component {
     return (
       <div className="AdminMain">
         <h1 className="AdminHeader">Change Main Menu Text and Image</h1>
-
         <div>
           <p className="imgUploaderTitle">Carousel Images</p>
           <div className="imgUploaderGroup">
@@ -202,40 +201,6 @@ class ManagerMain extends Component {
             />
           </div>
         </div>
-        <div className="PrimTag">
-          <div className="Tag">
-            <p>TAG 1 :</p>
-            <input
-              placeholder="Tag of Component"
-              onChange={(e) => this.inputChangeHandler(e, "tag1")}
-              value={this.state.tag1}
-            />
-          </div>
-          <div className="Tag">
-            <p>TAG 2 :</p>
-            <input
-              placeholder="Tag of Component"
-              onChange={(e) => this.inputChangeHandler(e, "tag2")}
-              value={this.state.tag2}
-            />
-          </div>
-          <div className="Tag">
-            <p>TAG 3 :</p>
-            <input
-              placeholder="Tag of Component"
-              onChange={(e) => this.inputChangeHandler(e, "tag3")}
-              value={this.state.tag3}
-            />
-          </div>
-          <div className="Tag">
-            <p>TAG 4 :</p>
-            <input
-              placeholder="Tag of Component"
-              onChange={(e) => this.inputChangeHandler(e, "tag4")}
-              value={this.state.tag4}
-            />
-          </div>
-        </div>
         <div>
           <p className="imgUploaderTitle">Tag Images</p>
           <div className="imgUploaderGroup">
@@ -282,6 +247,40 @@ class ManagerMain extends Component {
               maxFileSize={fileSize}
               withLabel={false}
               singleImage={true}
+            />
+          </div>
+        </div>
+        <div className="PrimTag">
+          <div className="Tag">
+            <p>TAG 1 :</p>
+            <input
+              placeholder="Tag of Component"
+              onChange={(e) => this.inputChangeHandler(e, "tag1")}
+              value={this.state.tag1}
+            />
+          </div>
+          <div className="Tag">
+            <p>TAG 2 :</p>
+            <input
+              placeholder="Tag of Component"
+              onChange={(e) => this.inputChangeHandler(e, "tag2")}
+              value={this.state.tag2}
+            />
+          </div>
+          <div className="Tag">
+            <p>TAG 3 :</p>
+            <input
+              placeholder="Tag of Component"
+              onChange={(e) => this.inputChangeHandler(e, "tag3")}
+              value={this.state.tag3}
+            />
+          </div>
+          <div className="Tag">
+            <p>TAG 4 :</p>
+            <input
+              placeholder="Tag of Component"
+              onChange={(e) => this.inputChangeHandler(e, "tag4")}
+              value={this.state.tag4}
             />
           </div>
         </div>
