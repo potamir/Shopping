@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import CurrencyFormat from "react-currency-format";
 import "./styles.sass";
 import * as constant from "../constant.js";
@@ -44,6 +44,27 @@ class PaymentPage extends Component {
   render() {
     return (
       <div className="paymentMainDiv">
+        <Link
+          className="backLink backLinkPay"
+          to={{
+            pathname: `/${this.props.location.state.path}`,
+            query: { param: true, component: "itempage" },
+          }}
+        >
+          <span className="small">
+            <svg
+              fill="#000000"
+              height="13"
+              viewBox="0 0 18 15"
+              width="13"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M7 10l5 5 5-5z" />
+              <path d="M0 0h24v24H0z" fill="none" />
+            </svg>
+          </span>
+          Back
+        </Link>
         <h3 className="paymentTitle">Current Payment</h3>
         <p className="paymentContent">{this.state.paymentDesc}</p>
         <CurrencyFormat

@@ -20,11 +20,15 @@ class PaymentList extends Component {
       paymentId: 0,
       open: [],
       openSet: false,
+      paymentStatus: "",
+      image: "",
+      popupType: "choice",
     };
     this.getAllPayment = this.getAllPayment.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
     this.updatePayment = this.updatePayment.bind(this);
+    this.checkDetails = this.checkDetails.bind(this);
   }
 
   async componentDidMount() {
@@ -79,6 +83,18 @@ class PaymentList extends Component {
       });
   }
 
+  checkDetails(status, index) {
+    console.log(this.state.data[index].payment_trc);
+    if (status === "Items Paid") {
+      this.setState({
+        modalIsOpen: true,
+        modalMsg: "Receipt Image",
+        image: this.state.data[index].payment_trc,
+        popupType: "imgdis",
+      });
+    }
+  }
+
   openModal() {
     this.setState({ modalIsOpen: true });
   }
@@ -96,8 +112,8 @@ class PaymentList extends Component {
           closeModal={this.closeModal}
           modalIsOpen={this.state.modalIsOpen}
           modalMsg={this.state.modalMsg}
-          yesCommand={this.updatePayment}
-          buttonType={"choice"}
+          image={this.state.image}
+          buttonType={this.state.popupType}
         />
         <div className="itemEaWrapper">
           {this.state.data.map((value, index) => {
@@ -161,6 +177,7 @@ class PaymentList extends Component {
                             modalMsg: "Approve that this items already paid?",
                             paymentId: value.payment_id,
                             paymentStatus: "Approved",
+                            popupType: "choice",
                           })
                         }
                         className="normalBtn adminManBtn approveBtn"
@@ -175,6 +192,7 @@ class PaymentList extends Component {
                             modalMsg: "Process the items shipping?",
                             paymentId: value.payment_id,
                             paymentStatus: "On Process",
+                            popupType: "choice",
                           })
                         }
                         className="normalBtn adminManBtn approveBtn"
@@ -182,7 +200,12 @@ class PaymentList extends Component {
                         Process
                       </button>
                     ) : null}
-                    <button className="normalBtn adminManBtn detailsBtn">
+                    <button
+                      onClick={() =>
+                        this.checkDetails(value.payment_status, index)
+                      }
+                      className="normalBtn adminManBtn detailsBtn"
+                    >
                       Details
                     </button>
                   </div>

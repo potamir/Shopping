@@ -5,6 +5,7 @@ import "./styles.sass";
 import * as constant from "../constant.js";
 import CurrencyFormat from "react-currency-format";
 import Popup from "../Popup/index.js";
+import imageCompression from "browser-image-compression";
 
 const address = constant.ENDPOINT;
 const imgsrc = constant.IMGSRC;
@@ -16,14 +17,22 @@ class History extends Component {
       data: [],
       modalIsOpen: false,
       modalMsg: "",
+      popupType: "choice",
       status: "",
       open: [],
       openSet: false,
+      paymentId: "",
+      paymentStatus: "",
+      preview: false,
+      pictures: [[]],
+      currRow: 0,
     };
     this.getAllPayment = this.getAllPayment.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
     this.updatePayment = this.updatePayment.bind(this);
+    this.checkDetails = this.checkDetails.bind(this);
+    this.onDrop = this.onDrop.bind(this);
   }
 
   async componentDidMount() {
@@ -32,7 +41,8 @@ class History extends Component {
       this.props.history.push({
         pathname: `/`,
       });
-    this.getAllPayment(loggedIn.user_id);
+    await this.getAllPayment(loggedIn.user_id);
+    console.log(this.state.data);
   }
 
   async getAllPayment(userId) {
@@ -54,6 +64,7 @@ class History extends Component {
 
   async updatePayment() {
     const _state = this.state;
+    if (_state.pictures[0].length > 0) console.log(_state.pictures[0]);
     await fetch(`http://${address}/payment_upd`, {
       method: "POST",
       headers: {
@@ -63,6 +74,8 @@ class History extends Component {
       body: JSON.stringify({
         paymentId: _state.status,
         status: "Items Paid",
+        paymentTrc: _state.pictures[0],
+        currPaymentTrc: _state.data[_state.currRow].payment_trc,
       }),
     })
       .then((response) => response.json())
@@ -75,12 +88,53 @@ class History extends Component {
       });
   }
 
+  checkDetails(status, total, paymentId, index) {
+    if (status === "Waiting Payment") {
+      this.props.history.push({
+        pathname: `/PaymentPage`,
+        state: { total: total, status: true, path: "History" },
+      });
+    } else if (status === "Items Paid") {
+      this.setState({
+        modalIsOpen: "imgsbm",
+        modalMsg: "Update or change the payment receipt?",
+        status: paymentId,
+        currRow: index,
+        popupType: "",
+      });
+    }
+  }
+
   openModal() {
     this.setState({ modalIsOpen: true });
   }
 
   closeModal() {
     this.setState({ modalIsOpen: false });
+  }
+
+  async onDrop(picture, url, index) {
+    let newImg = "";
+    const options = {
+      maxSizeMB: 0.05,
+      maxWidthOrHeight: 640,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(picture[0], options);
+      try {
+        newImg = await imageCompression.getDataUrlFromFile(compressedFile);
+        this.state.pictures.splice(index, 1, newImg);
+        await this.setState({ preview: false });
+        this.setState({
+          preview: true,
+        });
+      } catch (error) {
+        this.setState({ pictures: [[]] });
+      }
+    } catch (error) {
+      this.setState({ pictures: [[]] });
+    }
   }
 
   render() {
@@ -93,7 +147,9 @@ class History extends Component {
           modalIsOpen={this.state.modalIsOpen}
           modalMsg={this.state.modalMsg}
           yesCommand={this.updatePayment}
-          buttonType={"choice"}
+          buttonType={"imgsbm"}
+          preview={this.state.preview}
+          onDrop={this.onDrop}
         />
         <div className="itemEaWrapper">
           {this.state.data.map((value, index) => {
@@ -151,8 +207,10 @@ class History extends Component {
                         onClick={() =>
                           this.setState({
                             modalIsOpen: true,
-                            modalMsg: "Confirm that this items already paid?",
+                            modalMsg: "Send payment receipt to confirm!",
                             status: value.payment_id,
+                            currRow: index,
+                            popupType: "choice",
                           })
                         }
                         className="normalBtn adminManBtn approveBtn"
@@ -172,7 +230,17 @@ class History extends Component {
                         Items Being Process
                       </button>
                     ) : null}
-                    <button className="normalBtn adminManBtn detailsBtn">
+                    <button
+                      onClick={() =>
+                        this.checkDetails(
+                          value.payment_status,
+                          value.total_payment,
+                          value.payment_id,
+                          index
+                        )
+                      }
+                      className="normalBtn adminManBtn detailsBtn"
+                    >
                       Details
                     </button>
                     {value.payment_status === "Waiting Payment" ? (

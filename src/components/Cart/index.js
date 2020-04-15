@@ -145,7 +145,7 @@ class Cart extends Component {
             await this.deleteItemsOnCart();
             _props.history.push({
               pathname: `/PaymentPage`,
-              state: { total: total, status: true },
+              state: { total: total, status: true, path: "Cart" },
             });
           } else console.log("error");
         });
