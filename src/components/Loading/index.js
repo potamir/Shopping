@@ -1,9 +1,8 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
 import "./styles.sass";
-import BarLoader from "react-spinners/BarLoader";
+import ScaleLoader from "react-spinners/ScaleLoader";
 import disableScroll from "disable-scroll";
-import { css } from "@emotion/core";
 
 class Loading extends Component {
   constructor(props) {
@@ -19,27 +18,20 @@ class Loading extends Component {
       <React.Fragment>
         {_props.display ? (
           <div className="LoadingWrapper">
-            <BarLoader
-              css={override}
+            <ScaleLoader
               color={"#ffb4a2"}
-              height={50}
-              width={600}
+              height={100}
+              width={10}
+              margin={10}
+              radius={10}
               loading={_props.display}
             />
             <p className={"LoadingFont"}>Loading</p>
           </div>
-        ) : (
-          <React.Fragment />
-        )}
+        ) : null}
       </React.Fragment>
     );
   }
 }
-
-const override = css`
-  display: block;
-  margin: 0 auto;
-  background-color: #ddd;
-`;
 
 export default Loading;

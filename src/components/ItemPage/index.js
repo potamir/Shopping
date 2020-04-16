@@ -67,7 +67,12 @@ class ItemPage extends Component {
             className="backLink"
             to={{
               pathname: `/${_path}`,
-              query: { param: true, component: "itempage" },
+              state: {
+                param: true,
+                component: "itempage",
+                tag: passedData.tag,
+                title: passedData.tagIndex,
+              },
             }}
           >
             <span className="small">

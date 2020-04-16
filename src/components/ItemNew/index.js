@@ -48,7 +48,12 @@ class ItemNew extends Component {
           onClick={() => {
             this.props.history.push({
               pathname: `/item/${_props.index}`,
-              state: { item: newItem, _from: _props.from },
+              state: {
+                item: newItem,
+                _from: _props.from,
+                tag: this.props.tagText,
+                title: `title${this.props.index + 1}_tag`,
+              },
             });
           }}
           onMouseOver={async () => {

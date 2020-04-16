@@ -9,7 +9,6 @@ const imgsrc = constant.IMGSRC;
 
 class Item extends Component {
   render() {
-    console.log(this.props);
     return (
       <div className="item">
         <img
@@ -20,7 +19,7 @@ class Item extends Component {
               pathname: "/TagsItemPage",
               state: {
                 tag: this.props.data.tag_text,
-                titleIndex: this.props.index,
+                title: `title${this.props.index + 1}_tag`,
               },
             });
           }}

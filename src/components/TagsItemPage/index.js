@@ -102,7 +102,6 @@ class TagsItemPage extends Component {
       );
   }
   render() {
-    console.log(this.state.items);
     return (
       <div className="main">
         <Loading display={this.state.loading} />
@@ -125,12 +124,23 @@ class TagsItemPage extends Component {
           Back
         </Link>
         <div className="itemTagsMainDiv">
-          <h1 className="itemTagsMainTitle">Items #A #B</h1>
+          <h1 className="itemTagsMainTitle">
+            {this.state.items.length > 0
+              ? this.state.items[0][this.props.location.state.title]
+              : "No Title Found"}
+          </h1>
           <div className="itemNewDiv" ref={(ref) => (this.itemNewRef = ref)}>
             {this.state.items.length > 0 ? (
               <React.Fragment>
                 {this.state.items.map((e, i) => (
-                  <ItemNew key={i} index={i} items={e} from={"tags"} />
+                  <ItemNew
+                    key={i}
+                    index={i}
+                    items={e}
+                    from={"tags"}
+                    tagText={this.props.location.state.tag}
+                    tagIndex={this.props.index + 1}
+                  />
                 ))}
               </React.Fragment>
             ) : (

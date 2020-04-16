@@ -7,6 +7,8 @@ import CurrencyFormat from "react-currency-format";
 import Pagination from "react-js-pagination";
 import Popup from "../Popup/index.js";
 import * as constant from "../constant.js";
+import Loading from "../Loading/index";
+
 const address = constant.ENDPOINT;
 const imgsrc = constant.IMGSRC;
 
@@ -23,6 +25,7 @@ class Admin extends Component {
       modalIsOpen: false,
       modalMsg: "",
       selectedItem: "",
+      loading: false,
     };
     this.editItem = this.editItem.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
@@ -47,6 +50,7 @@ class Admin extends Component {
   }
 
   async getItem(renderFrom) {
+    await this.setState({ loading: true });
     // const data = this.state;
     await fetch(`http://${address}/items_get`, {
       method: "POST",
@@ -68,11 +72,13 @@ class Admin extends Component {
         await this.setState({
           data: responseJson,
           totalItems: responseJson[0].TotalRows,
+          loading: false,
         });
       });
   }
 
   async deleteItem() {
+    await this.setState({ loading: true });
     // const data = this.state;
     await fetch(`http://${address}/items_upd`, {
       method: "POST",
@@ -122,9 +128,9 @@ class Admin extends Component {
     });
   }
   render() {
-    console.log(this.state.data);
     return (
       <div className="AdminMan">
+        <Loading display={this.state.loading} />
         <Popup
           openModal={this.openModal}
           closeModal={this.closeModal}

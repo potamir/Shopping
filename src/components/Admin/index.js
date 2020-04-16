@@ -5,6 +5,7 @@ import "./styles.sass";
 import ImageUploader from "react-images-upload";
 import * as constant from "../constant.js";
 import imageCompression from "browser-image-compression";
+import Loading from "../Loading/index";
 
 const fileSize = 10242880;
 const address = constant.ENDPOINT;
@@ -25,6 +26,7 @@ class AdminMan extends Component {
       status: "",
       itemId: 0,
       weight: [],
+      loading: false,
     };
     this.onDrop = this.onDrop.bind(this);
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
@@ -101,6 +103,7 @@ class AdminMan extends Component {
   }
 
   async submitItem() {
+    await this.setState({ loading: true });
     const data = this.state;
     let requestTo = "items_post";
     const status = this.props.location.state
@@ -132,7 +135,6 @@ class AdminMan extends Component {
     })
       .then((response) => response.json())
       .then(async (responseJson) => {
-        console.log(responseJson);
         if (responseJson.status === "success") {
           if (this.state.status === "edit")
             this.props.history.push("/AdminMan");
@@ -143,139 +145,142 @@ class AdminMan extends Component {
 
   render() {
     return (
-      <div className="AdminMain">
-        <h1 className="AdminHeader">ADD NEW ITEM</h1>
-        <div className="NameField">
-          <div className="Name">
-            <p>NAME :</p>
-            <input
-              placeholder="Name of the Product"
-              onChange={(e) => this.inputChangeHandler(e, "name")}
-              value={this.state.name}
+      <React.Fragment>
+        <Loading display={this.state.loading} />
+        <div className="AdminMain">
+          <h1 className="AdminHeader">ADD NEW ITEM</h1>
+          <div className="NameField">
+            <div className="Name">
+              <p>NAME :</p>
+              <input
+                placeholder="Name of the Product"
+                onChange={(e) => this.inputChangeHandler(e, "name")}
+                value={this.state.name}
+              />
+            </div>
+            <div className="NPL">
+              <p>PRICE(Rupiah) :</p>
+              <input
+                placeholder="Item Price"
+                onChange={(e) => this.inputChangeHandler(e, "price")}
+                value={this.state.price}
+              />
+            </div>
+            <div className="NPL">
+              <p>TOTAL :</p>
+              <input
+                placeholder="Total Quantity"
+                onChange={(e) => this.inputChangeHandler(e, "total")}
+                value={this.state.total}
+              />
+            </div>
+            <div className="NPL">
+              <p>WEIGHT(gram) :</p>
+              <input
+                placeholder="Item Weight"
+                onChange={(e) => this.inputChangeHandler(e, "weight")}
+                value={this.state.weight}
+              />
+            </div>
+          </div>
+          <div className="imgUploaderGroup">
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, u, 0)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
+            />
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, u, 1)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
+            />
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, u, 2)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
+            />
+            <ImageUploader
+              className="imgUploader"
+              withIcon={false}
+              buttonText="+"
+              withPreview={this.state.preview}
+              onChange={(e, u) => this.onDrop(e, u, 3)}
+              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+              maxFileSize={fileSize}
+              withLabel={false}
+              singleImage={true}
             />
           </div>
-          <div className="NPL">
-            <p>PRICE(Rupiah) :</p>
-            <input
-              placeholder="Item Price"
-              onChange={(e) => this.inputChangeHandler(e, "price")}
-              value={this.state.price}
+          <div className="Description">
+            <p>DESCRIPTION :</p>
+            <textarea
+              className="DescTx"
+              placeholder="Description of Product"
+              onChange={(e) => this.inputChangeHandler(e, "desc")}
+              value={this.state.desc}
             />
           </div>
-          <div className="NPL">
-            <p>TOTAL :</p>
-            <input
-              placeholder="Total Quantity"
-              onChange={(e) => this.inputChangeHandler(e, "total")}
-              value={this.state.total}
-            />
+          <div className="PrimTag">
+            <div className="Tag">
+              <p>TAG 1 :</p>
+              <input
+                placeholder="Tag of Product"
+                onChange={(e) => this.inputChangeHandler(e, "tag1")}
+                value={this.state.tag1}
+              />
+            </div>
+            <div className="Tag">
+              <p>TAG 2 :</p>
+              <input
+                placeholder="Tag of Product"
+                onChange={(e) => this.inputChangeHandler(e, "tag2")}
+                value={this.state.tag2}
+              />
+            </div>
+            <div className="Tag">
+              <p>TAG 3 :</p>
+              <input
+                placeholder="Tag of Product"
+                onChange={(e) => this.inputChangeHandler(e, "tag3")}
+                value={this.state.tag3}
+              />
+            </div>
+            <div className="Tag">
+              <p>TAG 4 :</p>
+              <input
+                placeholder="Tag of Product"
+                onChange={(e) => this.inputChangeHandler(e, "tag4")}
+                value={this.state.tag4}
+              />
+            </div>
           </div>
-          <div className="NPL">
-            <p>WEIGHT(gram) :</p>
-            <input
-              placeholder="Item Weight"
-              onChange={(e) => this.inputChangeHandler(e, "weight")}
-              value={this.state.weight}
-            />
+          <div className="submitBtnDiv">
+            <button className="submitBtn normalBtn" onClick={this.submitItem}>
+              {this.state.status === "edit"
+                ? "Change Item's Data"
+                : "Add New Item"}
+            </button>
           </div>
         </div>
-        <div className="imgUploaderGroup">
-          <ImageUploader
-            className="imgUploader"
-            withIcon={false}
-            buttonText="+"
-            withPreview={this.state.preview}
-            onChange={(e, u) => this.onDrop(e, u, 0)}
-            imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-            maxFileSize={fileSize}
-            withLabel={false}
-            singleImage={true}
-          />
-          <ImageUploader
-            className="imgUploader"
-            withIcon={false}
-            buttonText="+"
-            withPreview={this.state.preview}
-            onChange={(e, u) => this.onDrop(e, u, 1)}
-            imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-            maxFileSize={fileSize}
-            withLabel={false}
-            singleImage={true}
-          />
-          <ImageUploader
-            className="imgUploader"
-            withIcon={false}
-            buttonText="+"
-            withPreview={this.state.preview}
-            onChange={(e, u) => this.onDrop(e, u, 2)}
-            imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-            maxFileSize={fileSize}
-            withLabel={false}
-            singleImage={true}
-          />
-          <ImageUploader
-            className="imgUploader"
-            withIcon={false}
-            buttonText="+"
-            withPreview={this.state.preview}
-            onChange={(e, u) => this.onDrop(e, u, 3)}
-            imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-            maxFileSize={fileSize}
-            withLabel={false}
-            singleImage={true}
-          />
-        </div>
-        <div className="Description">
-          <p>DESCRIPTION :</p>
-          <textarea
-            className="DescTx"
-            placeholder="Description of Product"
-            onChange={(e) => this.inputChangeHandler(e, "desc")}
-            value={this.state.desc}
-          />
-        </div>
-        <div className="PrimTag">
-          <div className="Tag">
-            <p>TAG 1 :</p>
-            <input
-              placeholder="Tag of Product"
-              onChange={(e) => this.inputChangeHandler(e, "tag1")}
-              value={this.state.tag1}
-            />
-          </div>
-          <div className="Tag">
-            <p>TAG 2 :</p>
-            <input
-              placeholder="Tag of Product"
-              onChange={(e) => this.inputChangeHandler(e, "tag2")}
-              value={this.state.tag2}
-            />
-          </div>
-          <div className="Tag">
-            <p>TAG 3 :</p>
-            <input
-              placeholder="Tag of Product"
-              onChange={(e) => this.inputChangeHandler(e, "tag3")}
-              value={this.state.tag3}
-            />
-          </div>
-          <div className="Tag">
-            <p>TAG 4 :</p>
-            <input
-              placeholder="Tag of Product"
-              onChange={(e) => this.inputChangeHandler(e, "tag4")}
-              value={this.state.tag4}
-            />
-          </div>
-        </div>
-        <div className="submitBtnDiv">
-          <button className="submitBtn normalBtn" onClick={this.submitItem}>
-            {this.state.status === "edit"
-              ? "Change Item's Data"
-              : "Add New Item"}
-          </button>
-        </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
