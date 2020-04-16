@@ -9,14 +9,20 @@ const imgsrc = constant.IMGSRC;
 
 class Item extends Component {
   render() {
-    console.log(this.props.data);
+    console.log(this.props);
     return (
       <div className="item">
         <img
           src={`${imgsrc}${this.props.data.tag_img}`}
           className="contentItem"
           onClick={() => {
-            this.props.history.push("/TagsItemPage");
+            this.props.history.push({
+              pathname: "/TagsItemPage",
+              state: {
+                tag: this.props.data.tag_text,
+                titleIndex: this.props.index,
+              },
+            });
           }}
         />
       </div>

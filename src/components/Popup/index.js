@@ -12,6 +12,14 @@ const imgsrc = constant.IMGSRC;
 class Popup extends Component {
   constructor(props) {
     super(props);
+    this.state = { shipRecNumber: [] };
+    this.inputChangeHandler = this.inputChangeHandler.bind(this);
+  }
+
+  inputChangeHandler(e, _state) {
+    let newValue = e.target.value;
+    this.state[_state].splice(0, 1, newValue);
+    this.forceUpdate();
   }
 
   render() {
@@ -31,7 +39,7 @@ class Popup extends Component {
                 <button
                   type="button"
                   className="modalBtn yesBtn"
-                  onClick={_props.yesCommand}
+                  onClick={() => _props.yesCommand("")}
                 >
                   Yes
                 </button>
@@ -99,6 +107,45 @@ class Popup extends Component {
                 showRotate={true}
               />
               <input readOnly className="modalInp" />
+              <div className="modalButton">
+                <button
+                  type="button"
+                  className="modalBtn cclBtn"
+                  onClick={_props.closeModal}
+                >
+                  Close
+                </button>
+              </div>
+            </form>
+          ) : null}
+          {_props.buttonType === "input" ? (
+            <form>
+              <input
+                className="recInput"
+                value={this.state.shipRecNumber}
+                onChange={(e) => this.inputChangeHandler(e, "shipRecNumber")}
+              />
+              <div className="modalButton">
+                <button
+                  type="button"
+                  className="modalBtn yesBtn"
+                  onClick={() => _props.yesCommand(this.state.shipRecNumber)}
+                >
+                  Send
+                </button>
+                <button
+                  type="button"
+                  className="modalBtn cclBtn"
+                  onClick={_props.closeModal}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : null}
+          {_props.buttonType === "display" ? (
+            <form>
+              <input className="recInput" value={_props.disValue} readOnly />
               <div className="modalButton">
                 <button
                   type="button"

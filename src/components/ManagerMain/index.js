@@ -5,6 +5,7 @@ import "./styles.sass";
 import ImageUploader from "react-images-upload";
 import * as constant from "../constant.js";
 import imageCompression from "browser-image-compression";
+import Loading from "../Loading/index";
 
 const fileSize = 10242880;
 const address = constant.ENDPOINT;
@@ -15,13 +16,14 @@ class ManagerMain extends Component {
       contact: [],
       about: [],
       help: [],
-      tag1: [],
-      tag2: [],
-      tag3: [],
-      tag4: [],
+      tags: [],
+      tagsCaro: [],
+      titles: [],
+      titlesCaro: [],
       carousel_imgs: [],
       tag_imgs: [],
       preview: true,
+      loading: false,
     };
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
     this.submitItem = this.submitItem.bind(this);
@@ -43,6 +45,7 @@ class ManagerMain extends Component {
   }
 
   async onDrop(picture, _state, url, index) {
+    await this.setState({ loading: true });
     let newImg = "";
     const options = {
       maxSizeMB: 1,
@@ -63,21 +66,23 @@ class ManagerMain extends Component {
     await this.setState({ preview: false });
     this.setState({
       preview: true,
+      loading: false,
     });
   }
 
-  inputChangeHandler(e, _state) {
+  inputChangeHandler(e, _state, index) {
     let newValue = e.target.value;
     if (_state === "price") {
       if (isNaN(parseInt(newValue)) && newValue !== "") {
         newValue = 0;
       }
     }
-    this.state[_state].splice(0, 1, newValue);
+    this.state[_state].splice(index, 1, newValue);
     this.forceUpdate();
   }
 
   async getItem() {
+    await this.setState({ loading: true });
     fetch(`http://${address}/mainman_get`, {
       method: "GET",
       headers: {
@@ -99,19 +104,41 @@ class ManagerMain extends Component {
           [responseJson[0].tag3_img],
           [responseJson[0].tag4_img]
         );
+        await this.state.tags.push(
+          [responseJson[0].tag1_text],
+          [responseJson[0].tag2_text],
+          [responseJson[0].tag3_text],
+          [responseJson[0].tag4_text]
+        );
+        await this.state.tagsCaro.push(
+          [responseJson[0].tag1_carousel],
+          [responseJson[0].tag2_carousel],
+          [responseJson[0].tag3_carousel],
+          [responseJson[0].tag4_carousel]
+        );
+        await this.state.titles.push(
+          [responseJson[0].title1_tag],
+          [responseJson[0].title2_tag],
+          [responseJson[0].title3_tag],
+          [responseJson[0].title4_tag]
+        );
+        await this.state.titlesCaro.push(
+          [responseJson[0].title1_carousel],
+          [responseJson[0].title2_carousel],
+          [responseJson[0].title3_carousel],
+          [responseJson[0].title4_carousel]
+        );
         await this.setState({
           contact: [responseJson[0].contact_text],
           about: [responseJson[0].about_text],
           help: [responseJson[0].help_text],
-          tag1: [responseJson[0].tag1_text],
-          tag2: [responseJson[0].tag2_text],
-          tag3: [responseJson[0].tag3_text],
-          tag4: [responseJson[0].tag4_text],
+          loading: false,
         });
       });
   }
 
   async submitItem() {
+    await this.setState({ loading: true });
     const data = this.state;
     console.log(data);
     await fetch(`http://${address}/mainman_post`, {
@@ -124,10 +151,10 @@ class ManagerMain extends Component {
         contact: data.contact,
         about: data.about,
         help: data.help,
-        tag1: data.tag1,
-        tag2: data.tag2,
-        tag3: data.tag3,
-        tag4: data.tag4,
+        tags: data.tags,
+        tagsCaro: data.tagsCaro,
+        titles: data.titles,
+        titlesCaro: data.titlesCaro,
         carouselImg1: data.carousel_imgs[0],
         carouselImg2: data.carousel_imgs[1],
         carouselImg3: data.carousel_imgs[2],
@@ -148,175 +175,280 @@ class ManagerMain extends Component {
   }
 
   render() {
-    console.log(this.state);
     return (
-      <div className="AdminMain">
-        <h1 className="AdminHeader">Change Main Menu Text and Image</h1>
-        <div>
-          <p className="imgUploaderTitle">Carousel Images</p>
-          <div className="imgUploaderGroup">
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 0)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 1)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 2)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 3)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
+      <React.Fragment>
+        <Loading display={this.state.loading} />
+        <div className="AdminMain">
+          <h1 className="AdminHeader">Change Main Menu Text and Image</h1>
+          <div>
+            <p className="imgUploaderTitle">Carousel Settings</p>
+            <div className="PrimTag">
+              <div className="Tag">
+                <p className="titleEaSetti">TITLE 1 :</p>
+                <input
+                  placeholder="Title on Carousel Page"
+                  onChange={(e) => this.inputChangeHandler(e, "titlesCaro", 0)}
+                  value={this.state.titlesCaro[0]}
+                />
+              </div>
+              <div className="Tag">
+                <p className="titleEaSetti">TITLE 2 :</p>
+                <input
+                  placeholder="Title on Carousel Page"
+                  onChange={(e) => this.inputChangeHandler(e, "titlesCaro", 1)}
+                  value={this.state.titlesCaro[1]}
+                />
+              </div>
+              <div className="Tag">
+                <p className="titleEaSetti">TITLE 3 :</p>
+                <input
+                  placeholder="Title on Carousel Page"
+                  onChange={(e) => this.inputChangeHandler(e, "titlesCaro", 2)}
+                  value={this.state.titlesCaro[2]}
+                />
+              </div>
+              <div className="Tag">
+                <p className="titleEaSetti">TITLE 4 :</p>
+                <input
+                  placeholder="Title on Carousel Page"
+                  onChange={(e) => this.inputChangeHandler(e, "titlesCaro", 3)}
+                  value={this.state.titlesCaro[3]}
+                />
+              </div>
+            </div>
+            <div className="imgUploaderGroup">
+              <ImageUploader
+                className="imgUploader"
+                withIcon={false}
+                buttonText="+"
+                withPreview={this.state.preview}
+                onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 0)}
+                imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+                maxFileSize={fileSize}
+                withLabel={false}
+                singleImage={true}
+              />
+              <ImageUploader
+                className="imgUploader"
+                withIcon={false}
+                buttonText="+"
+                withPreview={this.state.preview}
+                onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 1)}
+                imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+                maxFileSize={fileSize}
+                withLabel={false}
+                singleImage={true}
+              />
+              <ImageUploader
+                className="imgUploader"
+                withIcon={false}
+                buttonText="+"
+                withPreview={this.state.preview}
+                onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 2)}
+                imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+                maxFileSize={fileSize}
+                withLabel={false}
+                singleImage={true}
+              />
+              <ImageUploader
+                className="imgUploader"
+                withIcon={false}
+                buttonText="+"
+                withPreview={this.state.preview}
+                onChange={(e, u) => this.onDrop(e, "carousel_imgs", u, 3)}
+                imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+                maxFileSize={fileSize}
+                withLabel={false}
+                singleImage={true}
+              />
+            </div>
+            <div className="PrimTag">
+              <div className="Tag">
+                <p className="titleEaSetti">TAG 1 :</p>
+                <input
+                  placeholder="Tag of Carousel Page"
+                  onChange={(e) => this.inputChangeHandler(e, "tagsCaro", 0)}
+                  value={this.state.tagsCaro[0]}
+                />
+              </div>
+              <div className="Tag">
+                <p className="titleEaSetti">TAG 2 :</p>
+                <input
+                  placeholder="Tag of Carousel Page"
+                  onChange={(e) => this.inputChangeHandler(e, "tagsCaro", 1)}
+                  value={this.state.tagsCaro[1]}
+                />
+              </div>
+              <div className="Tag">
+                <p className="titleEaSetti">TAG 3 :</p>
+                <input
+                  placeholder="Tag of Carousel Page"
+                  onChange={(e) => this.inputChangeHandler(e, "tagsCaro", 2)}
+                  value={this.state.tagsCaro[2]}
+                />
+              </div>
+              <div className="Tag">
+                <p className="titleEaSetti">TAG 4 :</p>
+                <input
+                  placeholder="Tag of Carousel Page"
+                  onChange={(e) => this.inputChangeHandler(e, "tagsCaro", 3)}
+                  value={this.state.tagsCaro[3]}
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <p className="imgUploaderTitle">Tag Settings</p>
+            <div className="PrimTag">
+              <div className="Tag">
+                <p className="titleEaSetti">TITLE 1 :</p>
+                <input
+                  placeholder="Title on Tags Page"
+                  onChange={(e) => this.inputChangeHandler(e, "titles", 0)}
+                  value={this.state.titles[0]}
+                />
+              </div>
+              <div className="Tag">
+                <p className="titleEaSetti">TITLE 2 :</p>
+                <input
+                  placeholder="Title on Tags Page"
+                  onChange={(e) => this.inputChangeHandler(e, "titles", 1)}
+                  value={this.state.titles[1]}
+                />
+              </div>
+              <div className="Tag">
+                <p className="titleEaSetti">TITLE 3 :</p>
+                <input
+                  placeholder="Title on Tags Page"
+                  onChange={(e) => this.inputChangeHandler(e, "titles", 2)}
+                  value={this.state.titles[2]}
+                />
+              </div>
+              <div className="Tag">
+                <p className="titleEaSetti">TITLE 4 :</p>
+                <input
+                  placeholder="Title on Tags Page"
+                  onChange={(e) => this.inputChangeHandler(e, "titles", 3)}
+                  value={this.state.titles[3]}
+                />
+              </div>
+            </div>
+            <div className="imgUploaderGroup">
+              <ImageUploader
+                className="imgUploader"
+                withIcon={false}
+                buttonText="+"
+                withPreview={this.state.preview}
+                onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 0)}
+                imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+                maxFileSize={fileSize}
+                withLabel={false}
+                singleImage={true}
+              />
+              <ImageUploader
+                className="imgUploader"
+                withIcon={false}
+                buttonText="+"
+                withPreview={this.state.preview}
+                onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 1)}
+                imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+                maxFileSize={fileSize}
+                withLabel={false}
+                singleImage={true}
+              />
+              <ImageUploader
+                className="imgUploader"
+                withIcon={false}
+                buttonText="+"
+                withPreview={this.state.preview}
+                onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 2)}
+                imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+                maxFileSize={fileSize}
+                withLabel={false}
+                singleImage={true}
+              />
+              <ImageUploader
+                className="imgUploader"
+                withIcon={false}
+                buttonText="+"
+                withPreview={this.state.preview}
+                onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 3)}
+                imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
+                maxFileSize={fileSize}
+                withLabel={false}
+                singleImage={true}
+              />
+            </div>
+          </div>
+          <div className="PrimTag">
+            <div className="Tag">
+              <p className="titleEaSetti">TITLE 1 :</p>
+              <input
+                placeholder="Tags Page"
+                onChange={(e) => this.inputChangeHandler(e, "tags", 0)}
+                value={this.state.tags[0]}
+              />
+            </div>
+            <div className="Tag">
+              <p className="titleEaSetti">TITLE 2 :</p>
+              <input
+                placeholder="Tags Page"
+                onChange={(e) => this.inputChangeHandler(e, "tags", 1)}
+                value={this.state.tags[1]}
+              />
+            </div>
+            <div className="Tag">
+              <p className="titleEaSetti">TITLE 3 :</p>
+              <input
+                placeholder="Tags Page"
+                onChange={(e) => this.inputChangeHandler(e, "tags", 2)}
+                value={this.state.tags[2]}
+              />
+            </div>
+            <div className="Tag">
+              <p className="titleEaSetti">TITLE 4 :</p>
+              <input
+                placeholder="Tags Page"
+                onChange={(e) => this.inputChangeHandler(e, "tags", 3)}
+                value={this.state.tags[3]}
+              />
+            </div>
+          </div>
+          <p className="imgUploaderTitle">Footer Settings</p>
+          <div className="Description">
+            <p className="titleEaSetti">Contact Text :</p>
+            <textarea
+              className="DescTx"
+              placeholder="Footer Contact Text"
+              onChange={(e) => this.inputChangeHandler(e, "contact")}
+              value={this.state.contact}
             />
           </div>
-        </div>
-        <div>
-          <p className="imgUploaderTitle">Tag Images</p>
-          <div className="imgUploaderGroup">
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 0)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 1)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 2)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
-            />
-            <ImageUploader
-              className="imgUploader"
-              withIcon={false}
-              buttonText="+"
-              withPreview={this.state.preview}
-              onChange={(e, u) => this.onDrop(e, "tag_imgs", u, 3)}
-              imgExtension={[".jpg", ".png", ".PNG", ".jpeg"]}
-              maxFileSize={fileSize}
-              withLabel={false}
-              singleImage={true}
+          <div className="Description">
+            <p className="titleEaSetti">About Text :</p>
+            <textarea
+              className="DescTx"
+              placeholder="Footer About Text"
+              onChange={(e) => this.inputChangeHandler(e, "about")}
+              value={this.state.about}
             />
           </div>
-        </div>
-        <div className="PrimTag">
-          <div className="Tag">
-            <p>TAG 1 :</p>
-            <input
-              placeholder="Tag of Component"
-              onChange={(e) => this.inputChangeHandler(e, "tag1")}
-              value={this.state.tag1}
+          <div className="Description">
+            <p className="titleEaSetti">Help Text :</p>
+            <textarea
+              className="DescTx"
+              placeholder="Footer Help Text"
+              onChange={(e) => this.inputChangeHandler(e, "help")}
+              value={this.state.help}
             />
           </div>
-          <div className="Tag">
-            <p>TAG 2 :</p>
-            <input
-              placeholder="Tag of Component"
-              onChange={(e) => this.inputChangeHandler(e, "tag2")}
-              value={this.state.tag2}
-            />
-          </div>
-          <div className="Tag">
-            <p>TAG 3 :</p>
-            <input
-              placeholder="Tag of Component"
-              onChange={(e) => this.inputChangeHandler(e, "tag3")}
-              value={this.state.tag3}
-            />
-          </div>
-          <div className="Tag">
-            <p>TAG 4 :</p>
-            <input
-              placeholder="Tag of Component"
-              onChange={(e) => this.inputChangeHandler(e, "tag4")}
-              value={this.state.tag4}
-            />
+          <div className="submitBtnDiv">
+            <button className="submitBtn normalBtn" onClick={this.submitItem}>
+              Submit
+            </button>
           </div>
         </div>
-        <div className="Description">
-          <p>Contact Text :</p>
-          <textarea
-            className="DescTx"
-            placeholder="Footer Contact Text"
-            onChange={(e) => this.inputChangeHandler(e, "contact")}
-            value={this.state.contact}
-          />
-        </div>
-        <div className="Description">
-          <p>About Text :</p>
-          <textarea
-            className="DescTx"
-            placeholder="Footer About Text"
-            onChange={(e) => this.inputChangeHandler(e, "about")}
-            value={this.state.about}
-          />
-        </div>
-        <div className="Description">
-          <p>Help Text :</p>
-          <textarea
-            className="DescTx"
-            placeholder="Footer Help Text"
-            onChange={(e) => this.inputChangeHandler(e, "help")}
-            value={this.state.help}
-          />
-        </div>
-        <div className="submitBtnDiv">
-          <button className="submitBtn normalBtn" onClick={this.submitItem}>
-            Submit
-          </button>
-        </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

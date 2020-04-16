@@ -26,6 +26,8 @@ class History extends Component {
       preview: false,
       pictures: [[]],
       currRow: 0,
+      buttonType: "choice",
+      disValue: "",
     };
     this.getAllPayment = this.getAllPayment.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -76,6 +78,7 @@ class History extends Component {
         status: "Items Paid",
         paymentTrc: _state.pictures[0],
         currPaymentTrc: _state.data[_state.currRow].payment_trc,
+        shipRecNumber: "",
       }),
     })
       .then((response) => response.json())
@@ -96,11 +99,18 @@ class History extends Component {
       });
     } else if (status === "Items Paid") {
       this.setState({
-        modalIsOpen: "imgsbm",
+        modalIsOpen: true,
         modalMsg: "Update or change the payment receipt?",
         status: paymentId,
         currRow: index,
-        popupType: "",
+        popupType: "imgsbm",
+      });
+    } else if (status === "On Process") {
+      this.setState({
+        modalIsOpen: true,
+        modalMsg: "Shipping receipt number: ",
+        popupType: "display",
+        disValue: this.state.data[index].rec_number,
       });
     }
   }
@@ -147,9 +157,10 @@ class History extends Component {
           modalIsOpen={this.state.modalIsOpen}
           modalMsg={this.state.modalMsg}
           yesCommand={this.updatePayment}
-          buttonType={"imgsbm"}
+          buttonType={this.state.popupType}
           preview={this.state.preview}
           onDrop={this.onDrop}
+          disValue={this.state.disValue}
         />
         <div className="itemEaWrapper">
           {this.state.data.map((value, index) => {
@@ -210,7 +221,7 @@ class History extends Component {
                             modalMsg: "Send payment receipt to confirm!",
                             status: value.payment_id,
                             currRow: index,
-                            popupType: "choice",
+                            popupType: "imgsbm",
                           })
                         }
                         className="normalBtn adminManBtn approveBtn"
@@ -226,8 +237,8 @@ class History extends Component {
                         Approved
                       </button>
                     ) : value.payment_status === "On Process" ? (
-                      <button className="normalBtn adminManBtn waitBtn">
-                        Items Being Process
+                      <button className="normalBtn adminManBtn approveBtn">
+                        In Hand
                       </button>
                     ) : null}
                     <button

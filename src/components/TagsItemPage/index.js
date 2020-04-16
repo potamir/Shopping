@@ -6,6 +6,7 @@ import Pagination from "react-js-pagination";
 // import "bootstrap/dist/css/bootstrap.min.css";
 import * as constant from "../constant.js";
 import { withRouter, Link } from "react-router-dom";
+import Loading from "../Loading/index";
 
 const address = constant.ENDPOINT;
 const totalInOnePage = 8;
@@ -16,52 +17,95 @@ class TagsItemPage extends Component {
     this.state = {
       items: [],
       currPage: 1,
-      totalItems: 0
+      totalItems: 0,
+      loading: false,
     };
     this.handlePageChange = this.handlePageChange.bind(this);
+    this.getItemAll = this.getItemAll.bind(this);
   }
 
   componentDidMount() {
-    window.scrollTo(0, 0);
-    document.querySelector(".menu").classList.remove("open");
-    this.getItem(0);
+    const _props = this.props;
+    if (!_props.location.state) _props.history.push("/");
+    else {
+      window.scrollTo(0, 0);
+      document.querySelector(".menu").classList.remove("open");
+      if (_props.location.state.tag.toUpperCase() === "ALL") this.getItemAll(0);
+      else this.getItem(0, _props.location.state.tag);
+    }
   }
 
-  async getItem(renderFrom) {
+  async getItem(renderFrom, tag) {
     // const data = this.state;
+    await this.setState({ loading: true });
+    await fetch(`http://${address}/items_get_tag`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        renderFrom: renderFrom,
+        renderUntil: totalInOnePage,
+        tag: tag,
+      }),
+    })
+      .then((response) => response.json())
+      .then(async (responseJson) => {
+        if (responseJson.length > 0) {
+          await this.setState({
+            items: responseJson,
+            totalItems: responseJson[0].TotalRows,
+            loading: false,
+          });
+        }
+      });
+  }
+
+  async getItemAll(renderFrom) {
+    // const data = this.state;
+    await this.setState({ loading: true });
     await fetch(`http://${address}/items_get`, {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        tag1: "",
-        tag2: "",
-        tag3: "",
-        tag4: "",
         renderFrom: renderFrom,
-        renderUntil: totalInOnePage
-      })
+        renderUntil: totalInOnePage,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
-        await this.setState({
-          items: responseJson,
-          totalItems: responseJson[0].TotalRows
-        });
+      .then((response) => response.json())
+      .then(async (responseJson) => {
+        if (responseJson.length > 0) {
+          await this.setState({
+            items: responseJson,
+            totalItems: responseJson[0].TotalRows,
+            loading: false,
+          });
+        }
       });
   }
+
   async handlePageChange(pageNumber) {
-    console.log(`active page is ${pageNumber}`);
+    const _props = this.props;
     await this.setState({
-      currPage: pageNumber
+      currPage: pageNumber,
     });
-    this.getItem((pageNumber - 1) * totalInOnePage);
+    if (_props.location.state.tag.toUpperCase() === "ALL")
+      this.getItemAll((pageNumber - 1) * totalInOnePage);
+    else
+      this.getItem(
+        (pageNumber - 1) * totalInOnePage,
+        _props.location.state.tag
+      );
   }
   render() {
+    console.log(this.state.items);
     return (
       <div className="main">
+        <Loading display={this.state.loading} />
         <Link
           className="backLink"
           to={{ pathname: "/", query: { param: true, component: "tags" } }}
@@ -82,10 +126,20 @@ class TagsItemPage extends Component {
         </Link>
         <div className="itemTagsMainDiv">
           <h1 className="itemTagsMainTitle">Items #A #B</h1>
-          <div className="itemNewDiv" ref={ref => (this.itemNewRef = ref)}>
-            {this.state.items.map((e, i) => (
-              <ItemNew key={i} index={i} items={e} from={"tags"} />
-            ))}
+          <div className="itemNewDiv" ref={(ref) => (this.itemNewRef = ref)}>
+            {this.state.items.length > 0 ? (
+              <React.Fragment>
+                {this.state.items.map((e, i) => (
+                  <ItemNew key={i} index={i} items={e} from={"tags"} />
+                ))}
+              </React.Fragment>
+            ) : (
+              <div>
+                <h3>
+                  There Is No Item With Tag: {this.props.location.state.tag}
+                </h3>
+              </div>
+            )}
           </div>
         </div>
         <div className="paginationContainer">

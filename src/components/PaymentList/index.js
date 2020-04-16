@@ -60,7 +60,7 @@ class PaymentList extends Component {
       });
   }
 
-  async updatePayment() {
+  async updatePayment(shipRecNumber) {
     const _state = this.state;
     await fetch(`http://${address}/payment_upd`, {
       method: "POST",
@@ -71,6 +71,9 @@ class PaymentList extends Component {
       body: JSON.stringify({
         paymentId: _state.paymentId,
         status: _state.paymentStatus,
+        paymentTrc: "",
+        currPaymentTrc: "",
+        shipRecNumber: shipRecNumber,
       }),
     })
       .then((response) => response.json())
@@ -83,7 +86,7 @@ class PaymentList extends Component {
       });
   }
 
-  checkDetails(status, index) {
+  checkDetails(status, index, paymentId) {
     console.log(this.state.data[index].payment_trc);
     if (status === "Items Paid") {
       this.setState({
@@ -91,6 +94,14 @@ class PaymentList extends Component {
         modalMsg: "Receipt Image",
         image: this.state.data[index].payment_trc,
         popupType: "imgdis",
+      });
+    } else if (status === "On Process") {
+      this.setState({
+        modalIsOpen: true,
+        modalMsg: "Update or change shipping receipt number",
+        paymentId: paymentId,
+        paymentStatus: "On Process",
+        popupType: "input",
       });
     }
   }
@@ -112,6 +123,7 @@ class PaymentList extends Component {
           closeModal={this.closeModal}
           modalIsOpen={this.state.modalIsOpen}
           modalMsg={this.state.modalMsg}
+          yesCommand={this.updatePayment}
           image={this.state.image}
           buttonType={this.state.popupType}
         />
@@ -189,10 +201,11 @@ class PaymentList extends Component {
                         onClick={() =>
                           this.setState({
                             modalIsOpen: true,
-                            modalMsg: "Process the items shipping?",
+                            modalMsg:
+                              "Insert shipping receipt number to process!",
                             paymentId: value.payment_id,
                             paymentStatus: "On Process",
-                            popupType: "choice",
+                            popupType: "input",
                           })
                         }
                         className="normalBtn adminManBtn approveBtn"
@@ -202,7 +215,11 @@ class PaymentList extends Component {
                     ) : null}
                     <button
                       onClick={() =>
-                        this.checkDetails(value.payment_status, index)
+                        this.checkDetails(
+                          value.payment_status,
+                          index,
+                          value.payment_id
+                        )
                       }
                       className="normalBtn adminManBtn detailsBtn"
                     >

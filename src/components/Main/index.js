@@ -6,6 +6,7 @@ import ItemNew from "../ItemNew/index";
 import ItemCarousel from "../ItemCarousel/index";
 import { withRouter } from "react-router-dom";
 import * as constant from "../constant.js";
+import Loading from "../Loading/index";
 
 const address = constant.ENDPOINT;
 class Homepage extends Component {
@@ -14,19 +15,15 @@ class Homepage extends Component {
     this.state = {
       items: [],
       data: [],
-      tagsData: []
+      tagsData: [],
+      loading: false,
     };
   }
   async componentDidMount() {
-    console.log(localStorage);
+    await this.setState({ loading: true });
     const status = this.props.location.state;
     this.props.history.push({ pathname: "/", state: "loggedin" });
     if (status === "login") window.location.reload();
-    // const loggedIn = await JSON.parse(localStorage.getItem("userData"));
-    // if (!loggedIn)
-    //   browserHistory.push({
-    //     pathname: `/login`
-    //   });
     let newRefPos = this.itemNewRef.offsetTop;
     if (
       this.props.location.query
@@ -38,7 +35,7 @@ class Homepage extends Component {
       window.scrollTo(0, newRefPos);
     document.querySelector(".menu").classList.remove("open");
     await this.getMainman();
-    this.getItem();
+    await this.getItem();
   }
 
   async getItem() {
@@ -47,21 +44,18 @@ class Homepage extends Component {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        tag1: "",
-        tag2: "",
-        tag3: "",
-        tag4: "",
         renderFrom: 0,
-        renderUntil: 8
-      })
+        renderUntil: 8,
+      }),
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         await this.setState({
-          items: responseJson
+          items: responseJson,
+          loading: false,
         });
       });
   }
@@ -71,11 +65,11 @@ class Homepage extends Component {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-      .then(response => response.json())
-      .then(async responseJson => {
+      .then((response) => response.json())
+      .then(async (responseJson) => {
         const tempData = [];
         const tempTagsData = [];
         for (let i = 0; i < 4; i++) {
@@ -86,16 +80,16 @@ class Homepage extends Component {
           if (responseJson[0][currCar].length > 0)
             tempData.push({
               carousel_img: responseJson[0][currCar],
-              carousel_text: responseJson[0][currCarTxt]
+              carousel_text: responseJson[0][currCarTxt],
             });
           tempTagsData.push({
             tag_img: responseJson[0][currTag],
-            tag_text: responseJson[0][currTagTxt]
+            tag_text: responseJson[0][currTagTxt],
           });
         }
         await this.setState({
           data: tempData,
-          tagsData: tempTagsData
+          tagsData: tempTagsData,
         });
       });
   }
@@ -103,14 +97,15 @@ class Homepage extends Component {
   render() {
     return (
       <div className="main">
+        <Loading display={this.state.loading} />
         <ItemCarousel data={this.state.data} />
         <div className="innerMain">
-          <div className="itemDiv" ref={ref => (this.itemTagsRef = ref)}>
+          <div className="itemDiv" ref={(ref) => (this.itemTagsRef = ref)}>
             {this.state.tagsData.map((e, i) => (
-              <Item key={i} data={e} />
+              <Item key={i} index={i} data={e} />
             ))}
           </div>
-          <h1 className="itemMainTitle" ref={ref => (this.itemNewRef = ref)}>
+          <h1 className="itemMainTitle" ref={(ref) => (this.itemNewRef = ref)}>
             Newest Collection
           </h1>
           <div className="itemNewDiv">
