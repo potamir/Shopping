@@ -24,15 +24,17 @@ class TagsItemPage extends Component {
     this.getItemAll = this.getItemAll.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const _props = this.props;
     if (!_props.location.state) _props.history.push("/");
     else {
       window.scrollTo(0, 0);
       document.querySelector(".menu").classList.remove("open");
-      if (_props.location.state.tag.toUpperCase() === "ALL") this.getItemAll(0);
-      else this.getItem(0, _props.location.state.tag);
+      if (_props.location.state.tag.toUpperCase() === "ALL")
+        await this.getItemAll(0);
+      else await this.getItem(0, _props.location.state.tag);
     }
+    if (this.state.items.length < 1) this.setState({ loading: false });
   }
 
   async getItem(renderFrom, tag) {

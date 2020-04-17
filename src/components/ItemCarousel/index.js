@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
 import { Carousel } from "react-responsive-carousel";
+import { withRouter } from "react-router-dom";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./styles.sass";
 import * as constant from "../constant.js";
@@ -39,7 +40,19 @@ class ItemCarousel extends Component {
       >
         {_props.data.map((value, index) => {
           return (
-            <div key={index} className={"img_div"}>
+            <div
+              key={index}
+              className={"img_div"}
+              onClick={() => {
+                this.props.history.push({
+                  pathname: "/TagsItemPage",
+                  state: {
+                    tag: value.carousel_text,
+                    title: `title${index + 1}_carousel`,
+                  },
+                });
+              }}
+            >
               <img
                 className={"item_caro"}
                 src={`${imgsrc}${value.carousel_img}`}
@@ -53,4 +66,4 @@ class ItemCarousel extends Component {
   }
 }
 
-export default ItemCarousel;
+export default withRouter(ItemCarousel);

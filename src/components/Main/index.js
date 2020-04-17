@@ -74,7 +74,7 @@ class Homepage extends Component {
         const tempTagsData = [];
         for (let i = 0; i < 4; i++) {
           const currCar = `carousel_img${i + 1}`;
-          const currCarTxt = `carousel_text${i + 1}`;
+          const currCarTxt = `tag${i + 1}_carousel`;
           const currTag = `tag${i + 1}_img`;
           const currTagTxt = `tag${i + 1}_text`;
           if (responseJson[0][currCar].length > 0)
