@@ -5,6 +5,7 @@ import "./styles.sass";
 import * as constant from "../constant.js";
 import CurrencyFormat from "react-currency-format";
 import Popup from "../Popup/index.js";
+import Loading from "../Loading/index";
 
 const address = constant.ENDPOINT;
 const imgsrc = constant.IMGSRC;
@@ -23,6 +24,7 @@ class PaymentList extends Component {
       paymentStatus: "",
       image: "",
       popupType: "choice",
+      loading: false,
     };
     this.getAllPayment = this.getAllPayment.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -47,6 +49,7 @@ class PaymentList extends Component {
   }
 
   async getAllPayment() {
+    this.setState({ loading: true });
     await fetch(`http://${address}/payment_get`, {
       method: "GET",
       headers: {
@@ -56,12 +59,13 @@ class PaymentList extends Component {
     })
       .then((response) => response.json())
       .then(async (responseJson) => {
-        this.setState({ data: responseJson });
+        this.setState({ data: responseJson, loading: false });
       });
   }
 
   async updatePayment(shipRecNumber) {
     const _state = this.state;
+    this.setState({ loading: true });
     await fetch(`http://${address}/payment_upd`, {
       method: "POST",
       headers: {
@@ -118,6 +122,7 @@ class PaymentList extends Component {
     let open = [];
     return (
       <div className="cart">
+        <Loading display={this.state.loading} />
         <Popup
           openModal={this.openModal}
           closeModal={this.closeModal}

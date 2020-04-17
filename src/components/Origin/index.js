@@ -8,6 +8,9 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { styled } from "@material-ui/core/styles";
 import * as constant from "../constant.js";
+import { EditorState } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const address = constant.ENDPOINT;
 const StyledFormControl = styled(FormControl)({
@@ -27,11 +30,11 @@ class Origin extends Component {
       selectedCityName: [],
       currProvName: "",
       currCityName: "",
-      paymentDesc: [],
+      editorState: EditorState.createEmpty(),
     };
     this.dropdownHandler = this.dropdownHandler.bind(this);
     this.setOrigin = this.setOrigin.bind(this);
-    this.inputChangeHandler = this.inputChangeHandler.bind(this);
+    this.onEditorStateChange = this.onEditorStateChange.bind(this);
   }
 
   async componentDidMount() {
@@ -115,10 +118,10 @@ class Origin extends Component {
       });
   }
 
-  inputChangeHandler(e) {
-    let newValue = e.target.value;
-    this.state.paymentDesc.splice(0, 1, newValue);
-    this.forceUpdate();
+  onEditorStateChange(editorState) {
+    this.setState({
+      editorState,
+    });
   }
 
   render() {
@@ -129,11 +132,12 @@ class Origin extends Component {
         </h3>
         <div className="dropdownLocation dropdownOrigin">
           <div className="OriginPaymentDesc">
-            <textarea
-              className="DescTx"
-              placeholder="Payment Description(contain: Guide user how to do payment, bank account number, etc.)"
-              onChange={(e) => this.inputChangeHandler(e)}
-              value={this.state.paymentDesc}
+            <Editor
+              editorState={this.state.editorState}
+              toolbarClassName="toolbarClassName"
+              wrapperClassName="wrapperClassName"
+              editorClassName="editorClassName"
+              onEditorStateChange={this.onEditorStateChange}
             />
           </div>
           <StyledFormControl>

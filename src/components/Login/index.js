@@ -5,6 +5,7 @@ import passwordHash from "password-hash";
 import Popup from "../Popup/index.js";
 import "./styles.sass";
 import * as constant from "../constant.js";
+import Loading from "../Loading/index";
 
 const address = constant.ENDPOINT;
 class Login extends Component {
@@ -15,6 +16,7 @@ class Login extends Component {
       pass: [""],
       modalIsOpen: false,
       modalMsg: "",
+      loading: false,
     };
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
     this.logIn = this.logIn.bind(this);
@@ -46,6 +48,7 @@ class Login extends Component {
   }
 
   async logIn() {
+    this.setState({ loading: true });
     const data = this.state;
     await fetch(`http://${address}/user_check_get`, {
       method: "POST",
@@ -72,8 +75,17 @@ class Login extends Component {
               state: "login",
             });
           } else
-            this.setState({ modalMsg: "Wrong Password", modalIsOpen: true });
-        } else this.setState({ modalMsg: "User Not Found", modalIsOpen: true });
+            this.setState({
+              modalMsg: "Wrong Password",
+              modalIsOpen: true,
+              loading: false,
+            });
+        } else
+          this.setState({
+            modalMsg: "User Not Found",
+            modalIsOpen: true,
+            loading: false,
+          });
       });
   }
   openModal() {
@@ -87,6 +99,7 @@ class Login extends Component {
   render() {
     return (
       <div className="loginWrapper">
+        <Loading display={this.state.loading} />
         <Popup
           openModal={this.openModal}
           closeModal={this.closeModal}

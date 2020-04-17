@@ -129,7 +129,10 @@ class Popup extends Component {
                 <button
                   type="button"
                   className="modalBtn yesBtn"
-                  onClick={() => _props.yesCommand(this.state.shipRecNumber)}
+                  onClick={async () => {
+                    await _props.yesCommand(this.state.shipRecNumber);
+                    this.setState({ shipRecNumber: [] });
+                  }}
                 >
                   Send
                 </button>

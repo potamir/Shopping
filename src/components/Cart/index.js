@@ -8,6 +8,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { styled } from "@material-ui/core/styles";
+import Loading from "../Loading/index";
 
 import "./styles.sass";
 import * as constant from "../constant.js";
@@ -35,6 +36,7 @@ class Cart extends Component {
       selectedType: "REG",
       shippingCost: [],
       finalShipCost: 0,
+      loading: false,
     };
     this.removeHandler = this.removeHandler.bind(this);
     this.handlePageChange = this.handlePageChange.bind(this);
@@ -56,6 +58,7 @@ class Cart extends Component {
   }
 
   async getItem() {
+    await this.setState({ loading: true });
     // const data = this.state;
     await fetch(`http://${address}/items_get_id`, {
       method: "POST",
@@ -69,11 +72,16 @@ class Cart extends Component {
     })
       .then((response) => response.json())
       .then(async (responseJson) => {
-        this.setState({ data: responseJson, totalItems: responseJson.length });
+        this.setState({
+          data: responseJson,
+          totalItems: responseJson.length,
+          loading: false,
+        });
       });
   }
 
   async getProv() {
+    await this.setState({ loading: true });
     await fetch(`http://${address}/shp_get_all`, {
       method: "GET",
       headers: {
@@ -87,11 +95,13 @@ class Cart extends Component {
           this.setState({
             provs: responseJson.provs.rajaongkir.results,
             cities: responseJson.cities.rajaongkir.results,
+            loading: false,
           });
       });
   }
 
   async calcCost(totalWeight) {
+    await this.setState({ loading: true });
     const _state = this.state;
     await fetch(`http://${address}/shp_cost`, {
       method: "POST",
@@ -112,6 +122,7 @@ class Cart extends Component {
           });
           this.setFinalShipCost();
         } else console.log(responseJson.result);
+        this.setState({ loading: false });
       });
   }
 
@@ -196,6 +207,7 @@ class Cart extends Component {
     let allWeigth = 0;
     return (
       <div className="cart">
+        <Loading display={this.state.loading} />
         <div className="itemEaWrapper">
           {this.state.data.map((value, index) => {
             const total = value.price * parseInt(value.onCart);
