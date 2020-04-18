@@ -37,6 +37,7 @@ class Cart extends Component {
       shippingCost: [],
       finalShipCost: 0,
       loading: false,
+      completeAdd: [],
     };
     this.removeHandler = this.removeHandler.bind(this);
     this.handlePageChange = this.handlePageChange.bind(this);
@@ -45,6 +46,7 @@ class Cart extends Component {
     this.setFinalShipCost = this.setFinalShipCost.bind(this);
     this.insertPayment = this.insertPayment.bind(this);
     this.deleteItemsOnCart = this.deleteItemsOnCart.bind(this);
+    this.inputChangeHandler = this.inputChangeHandler.bind(this);
   }
   async componentDidMount() {
     const loggedIn = await JSON.parse(localStorage.getItem("userData"));
@@ -129,11 +131,12 @@ class Cart extends Component {
   async insertPayment(total) {
     const _state = this.state;
     const _props = this.props;
-    _props.history.push({
-      pathname: `/PaymentPage`,
-      state: { total: total, status: true },
-    });
-    if (_state.data.length > 0 && _state.selectedCity && total > 0) {
+    if (
+      _state.data.length > 0 &&
+      _state.selectedCity &&
+      total > 0 &&
+      _state.completeAdd[0].length > 0
+    ) {
       const user = await JSON.parse(localStorage.getItem("userData"));
       await fetch(`http://${address}/payment_post`, {
         method: "POST",
@@ -148,6 +151,7 @@ class Cart extends Component {
           paymentStatus: "Waiting Payment",
           itemsOnCart: JSON.stringify(_state.data),
           paymentType: _state.selectedType,
+          addInfo: _state.completeAdd[0],
         }),
       })
         .then((response) => response.json())
@@ -200,6 +204,12 @@ class Cart extends Component {
     if (this.state.selectedType === "REG")
       cost = this.state.shippingCost[1].cost[0].value;
     this.setState({ finalShipCost: cost });
+  }
+
+  inputChangeHandler(e, _state) {
+    let newValue = e.target.value;
+    this.state[_state].splice(0, 1, newValue);
+    this.forceUpdate();
   }
 
   render() {
@@ -388,25 +398,36 @@ class Cart extends Component {
             </StyledFormControl>
           ) : null}
           {this.state.shippingCost.length > 0 ? (
-            <StyledFormControl>
-              <InputLabel htmlFor="grouped-select">Type</InputLabel>
-              <Select
-                onChange={async (e) => {
-                  await this.dropdownHandler("selectedType", e.target.value);
-                  this.setFinalShipCost();
-                }}
-                defaultValue={"REG"}
-                id="grouped-select"
-              >
-                <MenuItem value={"OKE"}>Ongkos Kirim Ekonomis</MenuItem>
-                <MenuItem value={"REG"}>Layanan Reguler</MenuItem>
-              </Select>
-            </StyledFormControl>
+            <React.Fragment>
+              <StyledFormControl>
+                <InputLabel htmlFor="grouped-select">Type</InputLabel>
+                <Select
+                  onChange={async (e) => {
+                    await this.dropdownHandler("selectedType", e.target.value);
+                    this.setFinalShipCost();
+                  }}
+                  defaultValue={"REG"}
+                  id="grouped-select"
+                >
+                  <MenuItem value={"OKE"}>Ongkos Kirim Ekonomis</MenuItem>
+                  <MenuItem value={"REG"}>Layanan Reguler</MenuItem>
+                </Select>
+              </StyledFormControl>
+              <div className="detailInfo">
+                <p className="detailInfoTitle">DETAIL ADDRESS</p>
+                <textarea
+                  placeholder="Complete address such as: District, Housing, Block, Additional Phone Number, etc."
+                  onChange={(e) => this.inputChangeHandler(e, "completeAdd")}
+                  value={this.state.completeAdd}
+                  className="detailInfoTextArea"
+                />
+              </div>
+            </React.Fragment>
           ) : null}
         </div>
         <div className="pyBtnDiv">
           <button
-            className="declineBtn normalBtn"
+            className="continuePaymentBtn normalBtn"
             onClick={() =>
               this.insertPayment(allTotal + this.state.finalShipCost)
             }

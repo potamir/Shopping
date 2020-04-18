@@ -37,13 +37,15 @@ class History extends Component {
     this.updatePayment = this.updatePayment.bind(this);
     this.checkDetails = this.checkDetails.bind(this);
     this.onDrop = this.onDrop.bind(this);
+    this.deletePayment = this.deletePayment.bind(this);
+    this.yesCommand = this.yesCommand.bind(this);
   }
 
   async componentDidMount() {
     const loggedIn = await JSON.parse(localStorage.getItem("userData"));
     if (!loggedIn)
       this.props.history.push({
-        pathname: `/`,
+        pathname: `/Login`,
       });
     await this.getAllPayment(loggedIn.user_id);
     console.log(this.state.data);
@@ -127,6 +129,11 @@ class History extends Component {
     this.setState({ modalIsOpen: false });
   }
 
+  yesCommand() {
+    if (this.state.popupType == "choice") this.deletePayment();
+    else this.updatePayment();
+  }
+
   async onDrop(picture, url, index) {
     await this.setState({ loading: true });
     let newImg = "";
@@ -153,6 +160,26 @@ class History extends Component {
     }
   }
 
+  async deletePayment() {
+    const _state = this.state;
+    await this.setState({ loading: true });
+    await fetch(`http://${address}/payment_delete`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        paymentId: _state.status,
+      }),
+    })
+      .then((response) => response.json())
+      .then(async (responseJson) => {
+        console.log(responseJson);
+        window.location.reload();
+      });
+  }
+
   render() {
     let open = [];
     return (
@@ -163,7 +190,7 @@ class History extends Component {
           closeModal={this.closeModal}
           modalIsOpen={this.state.modalIsOpen}
           modalMsg={this.state.modalMsg}
-          yesCommand={this.updatePayment}
+          yesCommand={this.yesCommand}
           buttonType={this.state.popupType}
           preview={this.state.preview}
           onDrop={this.onDrop}
@@ -270,7 +297,18 @@ class History extends Component {
                         Details
                       </button>
                       {value.payment_status === "Waiting Payment" ? (
-                        <button className="normalBtn adminManBtn deleteBtn">
+                        <button
+                          className="normalBtn adminManBtn deleteBtn"
+                          onClick={() =>
+                            this.setState({
+                              modalIsOpen: true,
+                              modalMsg:
+                                "Are you sure want to cancel this product(s)?",
+                              status: value.payment_id,
+                              popupType: "choice",
+                            })
+                          }
+                        >
                           Cancel
                         </button>
                       ) : null}

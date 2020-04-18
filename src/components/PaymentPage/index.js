@@ -5,13 +5,21 @@ import CurrencyFormat from "react-currency-format";
 import "./styles.sass";
 import * as constant from "../constant.js";
 import Loading from "../Loading/index";
+import { EditorState, ContentState } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import htmlToDraft from "html-to-draftjs";
 
 const address = constant.ENDPOINT;
 class PaymentPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { total: 0, paymentDesc: "", loading: false };
-    this.getOrigin = this.getOrigin.bind(this);
+    this.state = {
+      total: 0,
+      paymentDesc: "",
+      loading: false,
+    };
+    this.getPaymentPage = this.getPaymentPage.bind(this);
   }
 
   async componentDidMount() {
@@ -23,12 +31,12 @@ class PaymentPage extends Component {
       this.props.history.push({
         pathname: `/`,
       });
-    this.getOrigin();
+    this.getPaymentPage();
   }
 
-  async getOrigin() {
+  async getPaymentPage() {
     await this.setState({ loading: true });
-    await fetch(`http://${address}/origin_get`, {
+    await fetch(`http://${address}/py_page_get`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -37,14 +45,21 @@ class PaymentPage extends Component {
     })
       .then((response) => response.json())
       .then(async (responseJson) => {
-        this.setState({
-          paymentDesc: [responseJson[0].payment_desc],
+        await this.setState({
+          paymentDesc: responseJson[0].py_page_content,
           loading: false,
         });
       });
   }
 
   render() {
+    const blocksFromHtml = htmlToDraft(this.state.paymentDesc);
+    const { contentBlocks, entityMap } = blocksFromHtml;
+    const contentState = ContentState.createFromBlockArray(
+      contentBlocks,
+      entityMap
+    );
+    const editorState = EditorState.createWithContent(contentState);
     return (
       <React.Fragment>
         <Loading display={this.state.loading} />
@@ -52,7 +67,7 @@ class PaymentPage extends Component {
           <Link
             className="backLink backLinkPay"
             to={{
-              pathname: `/${this.props.location.state.path}`,
+              pathname: `/`,
               query: { param: true, component: "itempage" },
             }}
           >
@@ -71,18 +86,29 @@ class PaymentPage extends Component {
             Back
           </Link>
           <h3 className="paymentTitle">Current Payment</h3>
-          <p className="paymentContent">{this.state.paymentDesc}</p>
-          <CurrencyFormat
-            value={this.state.total}
-            displayType={"text"}
-            thousandSeparator="."
-            decimalSeparator=","
-            prefix={"Rp. "}
-            suffix={",-"}
-            renderText={(total) => (
-              <p className="paymentTotal">Total:{total}</p>
-            )}
-          />
+          <div className="OriginPaymentDesc">
+            <Editor
+              readOnly
+              editorState={editorState}
+              toolbarClassName="toolbarClassName"
+              wrapperClassName="wrapperClassName"
+              editorClassName="editorClassName additonalDisp"
+              toolbarHidden
+            />
+          </div>
+          <div className="totalDiv">
+            <CurrencyFormat
+              value={this.state.total}
+              displayType={"text"}
+              thousandSeparator="."
+              decimalSeparator=","
+              prefix={"Rp. "}
+              suffix={",-"}
+              renderText={(total) => (
+                <p className="paymentTotal">Total:{total}</p>
+              )}
+            />
+          </div>
         </div>
       </React.Fragment>
     );

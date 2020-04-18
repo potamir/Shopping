@@ -68,6 +68,13 @@ class Header extends Component {
           >
             Origin
           </NavLink>
+          <NavLink
+            to="/PaymentPageEditor"
+            activeClassName="activeNavLink"
+            className="navLink"
+          >
+            Payment
+          </NavLink>
           {mq.matches ? (
             <NavLink
               to="/PaymentList"

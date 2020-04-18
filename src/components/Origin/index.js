@@ -8,9 +8,6 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { styled } from "@material-ui/core/styles";
 import * as constant from "../constant.js";
-import { EditorState } from "draft-js";
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const address = constant.ENDPOINT;
 const StyledFormControl = styled(FormControl)({
@@ -30,11 +27,9 @@ class Origin extends Component {
       selectedCityName: [],
       currProvName: "",
       currCityName: "",
-      editorState: EditorState.createEmpty(),
     };
     this.dropdownHandler = this.dropdownHandler.bind(this);
     this.setOrigin = this.setOrigin.bind(this);
-    this.onEditorStateChange = this.onEditorStateChange.bind(this);
   }
 
   async componentDidMount() {
@@ -90,7 +85,6 @@ class Origin extends Component {
         this.setState({
           currProvName: responseJson[0].province_name,
           currCityName: responseJson[0].city_name,
-          paymentDesc: [responseJson[0].payment_desc],
         });
       });
   }
@@ -108,7 +102,6 @@ class Origin extends Component {
         city_id: _state.selectedCityId,
         prov_name: _state.selectedProvName,
         city_name: _state.selectedCityName,
-        payment_desc: _state.paymentDesc[0],
       }),
     })
       .then((response) => response.json())
@@ -118,28 +111,11 @@ class Origin extends Component {
       });
   }
 
-  onEditorStateChange(editorState) {
-    this.setState({
-      editorState,
-    });
-  }
-
   render() {
     return (
       <div className="OriginMain">
-        <h3 className="OriginTitle">
-          {"Set Origin Address & Payment Description"}
-        </h3>
+        <h3 className="OriginTitle">{"Set Origin Address"}</h3>
         <div className="dropdownLocation dropdownOrigin">
-          <div className="OriginPaymentDesc">
-            <Editor
-              editorState={this.state.editorState}
-              toolbarClassName="toolbarClassName"
-              wrapperClassName="wrapperClassName"
-              editorClassName="editorClassName"
-              onEditorStateChange={this.onEditorStateChange}
-            />
-          </div>
           <StyledFormControl>
             <InputLabel htmlFor="grouped-select">Province</InputLabel>
             <Select
