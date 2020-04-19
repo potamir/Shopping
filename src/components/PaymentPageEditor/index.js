@@ -130,7 +130,7 @@ class PaymentPageEditor extends Component {
             />
           </div>
           <div className="pyPageBtnDiv">
-            <button onClick={this.submitHtml} className="declineBtn normalBtn">
+            <button onClick={this.submitHtml} className="paymentEditBtn normalBtn">
               Submit Changes
             </button>
           </div>

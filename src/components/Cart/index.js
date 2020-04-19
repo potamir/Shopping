@@ -33,6 +33,8 @@ class Cart extends Component {
       cities: [],
       selectedProv: "",
       selectedCity: "",
+      selectedProvName: "",
+      selectedCityName: "",
       selectedType: "REG",
       shippingCost: [],
       finalShipCost: 0,
@@ -152,6 +154,8 @@ class Cart extends Component {
           itemsOnCart: JSON.stringify(_state.data),
           paymentType: _state.selectedType,
           addInfo: _state.completeAdd[0],
+          province: _state.selectedProvName,
+          city: _state.selectedCityName,
         }),
       })
         .then((response) => response.json())
@@ -195,8 +199,9 @@ class Cart extends Component {
     this.getItem((pageNumber - 1) * totalInOnePage);
   }
 
-  dropdownHandler(_state, value) {
-    this.setState({ [_state]: value });
+  dropdownHandler(_state, value, value2) {
+    if (value2) this.setState({ [_state]: value, [`${_state}Name`]: value2 });
+    else this.setState({ [_state]: value });
   }
 
   setFinalShipCost() {
@@ -355,7 +360,8 @@ class Cart extends Component {
               onChange={async (e) => {
                 await this.dropdownHandler(
                   "selectedProv",
-                  e.target.value.province_id
+                  e.target.value.province_id,
+                  e.target.value.province
                 );
                 this.setState({ selectedCity: "" });
               }}
@@ -378,7 +384,8 @@ class Cart extends Component {
                 onChange={async (e) => {
                   await this.dropdownHandler(
                     "selectedCity",
-                    e.target.value.city_id
+                    e.target.value.city_id,
+                    `${e.target.value.type} ${e.target.value.city_name}`
                   );
                   this.calcCost(allWeigth);
                 }}

@@ -25,6 +25,7 @@ class PaymentList extends Component {
       image: "",
       popupType: "choice",
       loading: false,
+      details: "",
     };
     this.getAllPayment = this.getAllPayment.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -90,7 +91,7 @@ class PaymentList extends Component {
       });
   }
 
-  checkDetails(status, index, paymentId) {
+  checkDetails(status, index, paymentId, details) {
     console.log(this.state.data[index].payment_trc);
     if (status === "Items Paid") {
       this.setState({
@@ -106,6 +107,13 @@ class PaymentList extends Component {
         paymentId: paymentId,
         paymentStatus: "On Process",
         popupType: "input",
+      });
+    } else if (status === "Waiting Payment" || status === "Approved") {
+      this.setState({
+        modalIsOpen: true,
+        modalMsg: "User address and contact details:",
+        popupType: "display",
+        details: details,
       });
     }
   }
@@ -131,6 +139,7 @@ class PaymentList extends Component {
           yesCommand={this.updatePayment}
           image={this.state.image}
           buttonType={this.state.popupType}
+          disValue={this.state.details}
         />
         <div className="itemEaWrapper">
           {this.state.data.map((value, index) => {
@@ -223,7 +232,8 @@ class PaymentList extends Component {
                         this.checkDetails(
                           value.payment_status,
                           index,
-                          value.payment_id
+                          value.payment_id,
+                          `INFO: ${value.additional_info}\nCITY: ${value.city}\nPROVINCE: ${value.province}`
                         )
                       }
                       className="normalBtn adminManBtn detailsBtn"

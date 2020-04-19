@@ -148,7 +148,7 @@ class Popup extends Component {
           ) : null}
           {_props.buttonType === "display" ? (
             <form>
-              <input className="recInput" value={_props.disValue} readOnly />
+              <textarea className="recInputRO" value={_props.disValue} readOnly />
               <div className="modalButton">
                 <button
                   type="button"
