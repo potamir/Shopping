@@ -2,7 +2,6 @@
   "name": "CoutureHijaab",
   "version": "0.1.0",
   "description": "A beautiful e-commerce template with a flat design.",
-  "proxy": "http://couturehijaab.id",
   "engines": {
     "npm": ">=3"
   },
@@ -76,7 +75,8 @@
     "reactjs-popup": "^1.5.0",
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
-    "regenerator-runtime": "^0.13.3"
+    "regenerator-runtime": "^0.13.3",
+    "serve": "11.3.0"
   },
   "devDependencies": {
     "autoprefixer": "6.5.4",

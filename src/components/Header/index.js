@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 import "./styles.sass";
+import * as constant from "../constant.js";
+const imgsrc = constant.IMGSRC;
 
 let mq = window.matchMedia("(max-width: 768px)");
 
@@ -231,10 +233,7 @@ class Header extends Component {
           ) : null}
         </div>
         <div className={"header_logodiv"}>
-          <img
-            className={"header_logo"}
-            src={"http://images.couturehijaab.id/logo.png"}
-          />
+          <img className={"header_logo"} src={`${imgsrc}logo.png`} />
         </div>
         {this.state.menuActive ? this.menuButton : ""}
         {this.state.nav}
