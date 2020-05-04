@@ -9,6 +9,7 @@ import Loading from "../Loading/index";
 
 const fileSize = 10242880;
 const address = constant.ENDPOINT;
+const imgsrc = constant.IMGSRC;
 class AdminMan extends Component {
   constructor(props) {
     super(props);
@@ -63,6 +64,7 @@ class AdminMan extends Component {
         status: "edit",
         itemId: item.item_id,
         weight: [item.weight],
+        pictures: [item.img1, item.img2, item.img3, item.img4],
       });
     }
   }
@@ -183,6 +185,26 @@ class AdminMan extends Component {
               />
             </div>
           </div>
+          {this.state.status === "edit" ? (
+            <div className="imgUploaderGroup">
+              <img
+                src={`${imgsrc}${this.state.pictures[0]}`}
+                className="imgUploader"
+              />
+              <img
+                src={`${imgsrc}${this.state.pictures[1]}`}
+                className="imgUploader"
+              />
+              <img
+                src={`${imgsrc}${this.state.pictures[2]}`}
+                className="imgUploader"
+              />
+              <img
+                src={`${imgsrc}${this.state.pictures[3]}`}
+                className="imgUploader"
+              />
+            </div>
+          ) : null}
           <div className="imgUploaderGroup">
             <ImageUploader
               className="imgUploader"

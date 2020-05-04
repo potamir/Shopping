@@ -9,6 +9,7 @@ import Loading from "../Loading/index";
 
 const fileSize = 10242880;
 const address = constant.ENDPOINT;
+const imgsrc = constant.IMGSRC;
 class ManagerMain extends Component {
   constructor(props) {
     super(props);
@@ -21,6 +22,8 @@ class ManagerMain extends Component {
       titles: [],
       titlesCaro: [],
       carousel_imgs: [],
+      carousel_imgs_temp: [],
+      tag_imgs_temp: [],
       tag_imgs: [],
       preview: true,
       loading: false,
@@ -61,13 +64,15 @@ class ManagerMain extends Component {
         console.log(error);
       }
     } catch (error) {
-      console.log(error);
+      this.state;
+      this.state[_state].splice(index, 1, this.state[`${_state}_temp`][index]);
     }
     await this.setState({ preview: false });
     this.setState({
       preview: true,
       loading: false,
     });
+    console.log(this.state);
   }
 
   inputChangeHandler(e, _state, index) {
@@ -99,6 +104,18 @@ class ManagerMain extends Component {
           [responseJson[0].carousel_img4]
         );
         await this.state.tag_imgs.push(
+          [responseJson[0].tag1_img],
+          [responseJson[0].tag2_img],
+          [responseJson[0].tag3_img],
+          [responseJson[0].tag4_img]
+        );
+        await this.state.carousel_imgs_temp.push(
+          [responseJson[0].carousel_img1],
+          [responseJson[0].carousel_img2],
+          [responseJson[0].carousel_img3],
+          [responseJson[0].carousel_img4]
+        );
+        await this.state.tag_imgs_temp.push(
           [responseJson[0].tag1_img],
           [responseJson[0].tag2_img],
           [responseJson[0].tag3_img],
@@ -217,6 +234,24 @@ class ManagerMain extends Component {
               </div>
             </div>
             <div className="imgUploaderGroup">
+              <img
+                src={`${imgsrc}${this.state.carousel_imgs_temp[0]}`}
+                className="imgUploader"
+              />
+              <img
+                src={`${imgsrc}${this.state.carousel_imgs_temp[1]}`}
+                className="imgUploader"
+              />
+              <img
+                src={`${imgsrc}${this.state.carousel_imgs_temp[2]}`}
+                className="imgUploader"
+              />
+              <img
+                src={`${imgsrc}${this.state.carousel_imgs_temp[3]}`}
+                className="imgUploader"
+              />
+            </div>
+            <div className="imgUploaderGroup">
               <ImageUploader
                 className="imgUploader"
                 withIcon={false}
@@ -332,6 +367,24 @@ class ManagerMain extends Component {
                   value={this.state.titles[3]}
                 />
               </div>
+            </div>
+            <div className="imgUploaderGroup">
+              <img
+                src={`${imgsrc}${this.state.tag_imgs_temp[0]}`}
+                className="imgUploader"
+              />
+              <img
+                src={`${imgsrc}${this.state.tag_imgs_temp[1]}`}
+                className="imgUploader"
+              />
+              <img
+                src={`${imgsrc}${this.state.tag_imgs_temp[2]}`}
+                className="imgUploader"
+              />
+              <img
+                src={`${imgsrc}${this.state.tag_imgs_temp[3]}`}
+                className="imgUploader"
+              />
             </div>
             <div className="imgUploaderGroup">
               <ImageUploader
