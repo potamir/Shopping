@@ -6,6 +6,7 @@ import ImageUploader from "react-images-upload";
 import * as constant from "../constant.js";
 import imageCompression from "browser-image-compression";
 import Loading from "../Loading/index";
+import Popup from "../Popup/index.js";
 
 const fileSize = 10242880;
 const address = constant.ENDPOINT;
@@ -27,9 +28,14 @@ class ManagerMain extends Component {
       tag_imgs: [],
       preview: true,
       loading: false,
+      modalIsOpen: false,
+      modalMsg: "",
     };
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
     this.submitItem = this.submitItem.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.removeImage = this.removeImage.bind(this);
   }
 
   async componentDidMount() {
@@ -55,17 +61,25 @@ class ManagerMain extends Component {
       maxWidthOrHeight: 1024,
       useWebWorker: true,
     };
+    const prevImage = this.state[`${_state}_temp`][index];
     try {
       const compressedFile = await imageCompression(picture[0], options);
       try {
         newImg = await imageCompression.getDataUrlFromFile(compressedFile);
         this.state[_state].splice(index, 1, newImg);
       } catch (error) {
-        console.log(error);
+        this.state[_state].splice(
+          index,
+          1,
+          prevImage[0] === "NoImage.png" ? "" : prevImage
+        );
       }
     } catch (error) {
-      this.state;
-      this.state[_state].splice(index, 1, this.state[`${_state}_temp`][index]);
+      this.state[_state].splice(
+        index,
+        1,
+        prevImage[0] === "NoImage.png" ? "" : prevImage
+      );
     }
     await this.setState({ preview: false });
     this.setState({
@@ -77,13 +91,20 @@ class ManagerMain extends Component {
 
   inputChangeHandler(e, _state, index) {
     let newValue = e.target.value;
-    if (_state === "price") {
-      if (isNaN(parseInt(newValue)) && newValue !== "") {
-        newValue = 0;
-      }
+    let noSpecialChar = true;
+    console.log(newValue);
+    for (let i = 0; i < newValue.length; i++) {
+      if (newValue[i] === "'" || newValue[i] === "\\") noSpecialChar = false;
     }
-    this.state[_state].splice(index, 1, newValue);
-    this.forceUpdate();
+    if (!noSpecialChar) {
+      this.setState({
+        modalIsOpen: true,
+        modalMsg: "Apostrophe(') and Back Slash(\\) Character are not allowed",
+      });
+    } else {
+      this.state[_state].splice(index, 1, newValue);
+      this.forceUpdate();
+    }
   }
 
   async getItem() {
@@ -111,9 +132,21 @@ class ManagerMain extends Component {
         );
         await this.state.carousel_imgs_temp.push(
           [responseJson[0].carousel_img1],
-          [responseJson[0].carousel_img2],
-          [responseJson[0].carousel_img3],
-          [responseJson[0].carousel_img4]
+          [
+            responseJson[0].carousel_img2
+              ? responseJson[0].carousel_img2
+              : "NoImage.png",
+          ],
+          [
+            responseJson[0].carousel_img3
+              ? responseJson[0].carousel_img3
+              : "NoImage.png",
+          ],
+          [
+            responseJson[0].carousel_img4
+              ? responseJson[0].carousel_img4
+              : "NoImage.png",
+          ]
         );
         await this.state.tag_imgs_temp.push(
           [responseJson[0].tag1_img],
@@ -191,9 +224,30 @@ class ManagerMain extends Component {
       });
   }
 
+  async removeImage(index) {
+    this.state.carousel_imgs.splice(index, 1, "");
+    this.state.carousel_imgs_temp.splice(index, 1, "NoImage.png");
+    this.forceUpdate();
+  }
+
+  openModal() {
+    this.setState({ modalIsOpen: true });
+  }
+
+  closeModal() {
+    this.setState({ modalIsOpen: false });
+  }
+
   render() {
     return (
       <React.Fragment>
+        <Popup
+          openModal={this.openModal}
+          closeModal={this.closeModal}
+          modalIsOpen={this.state.modalIsOpen}
+          modalMsg={this.state.modalMsg}
+          buttonType={"close"}
+        />
         <Loading display={this.state.loading} />
         <div className="AdminMain">
           <h1 className="AdminHeader">Change Main Menu Text and Image</h1>
@@ -240,15 +294,18 @@ class ManagerMain extends Component {
               />
               <img
                 src={`${imgsrc}${this.state.carousel_imgs_temp[1]}`}
-                className="imgUploader"
+                onClick={() => this.removeImage(1)}
+                className="imgUploader removeImage"
               />
               <img
                 src={`${imgsrc}${this.state.carousel_imgs_temp[2]}`}
-                className="imgUploader"
+                onClick={() => this.removeImage(2)}
+                className="imgUploader removeImage"
               />
               <img
                 src={`${imgsrc}${this.state.carousel_imgs_temp[3]}`}
-                className="imgUploader"
+                onClick={() => this.removeImage(3)}
+                className="imgUploader removeImage"
               />
             </div>
             <div className="imgUploaderGroup">

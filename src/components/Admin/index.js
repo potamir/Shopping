@@ -6,6 +6,7 @@ import ImageUploader from "react-images-upload";
 import * as constant from "../constant.js";
 import imageCompression from "browser-image-compression";
 import Loading from "../Loading/index";
+import Popup from "../Popup/index.js";
 
 const fileSize = 10242880;
 const address = constant.ENDPOINT;
@@ -15,6 +16,7 @@ class AdminMan extends Component {
     super(props);
     this.state = {
       pictures: [[], [], [], []],
+      pictures_temp: [],
       preview: true,
       name: [],
       desc: [],
@@ -28,10 +30,15 @@ class AdminMan extends Component {
       itemId: 0,
       weight: [],
       loading: false,
+      modalIsOpen: false,
+      modalMsg: "",
     };
     this.onDrop = this.onDrop.bind(this);
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
     this.submitItem = this.submitItem.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.removeImage = this.removeImage.bind(this);
   }
 
   async componentDidMount() {
@@ -51,6 +58,11 @@ class AdminMan extends Component {
       : "curr";
     if (status === "edit") {
       const item = this.props.location.state.item;
+      let newImg = [item.img1, item.img2, item.img3, item.img4];
+      if (!newImg[0]) newImg.splice(0, 1, "NoImage.png");
+      if (!newImg[1]) newImg.splice(1, 1, "NoImage.png");
+      if (!newImg[2]) newImg.splice(2, 1, "NoImage.png");
+      if (!newImg[3]) newImg.splice(3, 1, "NoImage.png");
       await this.setState({
         preview: true,
         name: [item.name],
@@ -64,6 +76,7 @@ class AdminMan extends Component {
         status: "edit",
         itemId: item.item_id,
         weight: [item.weight],
+        pictures_temp: newImg,
         pictures: [item.img1, item.img2, item.img3, item.img4],
       });
     }
@@ -71,83 +84,140 @@ class AdminMan extends Component {
 
   async onDrop(picture, url, index) {
     let newImg = "";
+    const _state = this.state;
     const options = {
       maxSizeMB: 0.05,
       maxWidthOrHeight: 640,
       useWebWorker: true,
     };
+    const prevImage = _state.pictures_temp[index];
     try {
       const compressedFile = await imageCompression(picture[0], options);
       try {
         newImg = await imageCompression.getDataUrlFromFile(compressedFile);
-        this.state.pictures.splice(index, 1, newImg);
+        _state.pictures.splice(index, 1, newImg);
       } catch (error) {
-        console.log(error);
+        if (_state.status === "edit")
+          _state.pictures.splice(
+            index,
+            1,
+            prevImage === "NoImage.png" ? "" : prevImage
+          );
+        else _state.pictures.splice(index, 1, "");
       }
     } catch (error) {
-      console.log(error);
+      if (_state.status === "edit")
+        _state.pictures.splice(
+          index,
+          1,
+          prevImage === "NoImage.png" ? "" : prevImage
+        );
+      else _state.pictures.splice(index, 1, "");
     }
     await this.setState({ preview: false });
     this.setState({
       preview: true,
     });
+    console.log(this.state);
   }
 
   inputChangeHandler(e, _state) {
     let newValue = e.target.value;
-    if (_state === "price") {
-      if (isNaN(parseInt(newValue)) && newValue !== "") {
-        newValue = 0;
-      }
+    let noSpecialChar = true;
+    let isNumber = true;
+    console.log(newValue);
+    for (let i = 0; i < newValue.length; i++) {
+      if (newValue[i] === "'" || newValue[i] === "\\") noSpecialChar = false;
+      if (isNaN(parseInt(newValue[i])) && newValue[i] !== "") isNumber = false;
     }
-    this.state[_state].splice(0, 1, newValue);
-    this.forceUpdate();
+    if (!noSpecialChar) {
+      this.setState({
+        modalIsOpen: true,
+        modalMsg: "Apostrophe(') and Back Slash(\\) Character are not allowed",
+      });
+    } else {
+      if (_state === "price" || _state === "weight" || _state === "total") {
+        if (!isNumber) {
+          newValue = 0;
+        }
+      }
+      this.state[_state].splice(0, 1, newValue);
+      this.forceUpdate();
+    }
   }
 
   async submitItem() {
-    await this.setState({ loading: true });
     const data = this.state;
     let requestTo = "items_post";
     const status = this.props.location.state
       ? this.props.location.state.status
       : "curr";
     if (status === "edit") requestTo = "items_post_upd";
-    await fetch(`http://${address}/${requestTo}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: data.name[0],
-        description: data.desc,
-        total: parseInt(data.total),
-        price: parseInt(data.price),
-        img1: data.pictures[0],
-        img2: data.pictures[1],
-        img3: data.pictures[2],
-        img4: data.pictures[3],
-        tag1: data.tag1,
-        tag2: data.tag2,
-        tag3: data.tag3,
-        tag4: data.tag4,
-        itemId: data.itemId,
-        weight: data.weight,
-      }),
-    })
-      .then((response) => response.json())
-      .then(async (responseJson) => {
-        if (responseJson.status === "success") {
-          if (this.state.status === "edit")
-            this.props.history.push("/AdminMan");
-          else window.location.reload();
-        }
+    if (data.pictures[0][0] && data.pictures[1][0]) {
+      await this.setState({ loading: true });
+      await fetch(`http://${address}/${requestTo}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.name[0],
+          description: data.desc,
+          total: parseInt(data.total),
+          price: parseInt(data.price),
+          img1: data.pictures[0],
+          img2: data.pictures[1],
+          img3: data.pictures[2],
+          img4: data.pictures[3],
+          tag1: data.tag1,
+          tag2: data.tag2,
+          tag3: data.tag3,
+          tag4: data.tag4,
+          itemId: data.itemId,
+          weight: data.weight,
+        }),
+      })
+        .then((response) => response.json())
+        .then(async (responseJson) => {
+          if (responseJson.status === "success") {
+            if (this.state.status === "edit")
+              this.props.history.push("/AdminMan");
+            else window.location.reload();
+          }
+        });
+      console.log(data.pictures);
+    } else
+      this.setState({
+        modalIsOpen: true,
+        modalMsg: "The first two image is required!",
       });
+  }
+
+  async removeImage(index) {
+    await this.state.pictures.splice(index, 1, "");
+    await this.state.pictures_temp.splice(index, 1, "NoImage.png");
+    this.forceUpdate();
+  }
+
+  openModal() {
+    this.setState({ modalIsOpen: true });
+  }
+
+  closeModal() {
+    this.setState({ modalIsOpen: false });
   }
 
   render() {
     return (
       <React.Fragment>
+        <Popup
+          openModal={this.openModal}
+          closeModal={this.closeModal}
+          modalIsOpen={this.state.modalIsOpen}
+          modalMsg={this.state.modalMsg}
+          buttonType={"close"}
+        />
         <Loading display={this.state.loading} />
         <div className="AdminMain">
           <h1 className="AdminHeader">ADD NEW ITEM</h1>
@@ -158,6 +228,7 @@ class AdminMan extends Component {
                 placeholder="Name of the Product"
                 onChange={(e) => this.inputChangeHandler(e, "name")}
                 value={this.state.name}
+                readOnly={this.state.status === "edit"}
               />
             </div>
             <div className="NPL">
@@ -188,20 +259,24 @@ class AdminMan extends Component {
           {this.state.status === "edit" ? (
             <div className="imgUploaderGroup">
               <img
-                src={`${imgsrc}${this.state.pictures[0]}`}
+                src={`${imgsrc}${this.state.pictures_temp[0]}`}
+                onClick={() => this.removeImage(0)}
                 className="imgUploader"
               />
               <img
-                src={`${imgsrc}${this.state.pictures[1]}`}
-                className="imgUploader"
+                src={`${imgsrc}${this.state.pictures_temp[1]}`}
+                onClick={() => this.removeImage(1)}
+                className="imgUploader removeImage"
               />
               <img
-                src={`${imgsrc}${this.state.pictures[2]}`}
-                className="imgUploader"
+                src={`${imgsrc}${this.state.pictures_temp[2]}`}
+                onClick={() => this.removeImage(2)}
+                className="imgUploader removeImage"
               />
               <img
-                src={`${imgsrc}${this.state.pictures[3]}`}
-                className="imgUploader"
+                src={`${imgsrc}${this.state.pictures_temp[3]}`}
+                onClick={() => this.removeImage(3)}
+                className="imgUploader removeImage"
               />
             </div>
           ) : null}
