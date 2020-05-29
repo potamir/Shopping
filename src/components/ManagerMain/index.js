@@ -7,6 +7,7 @@ import * as constant from "../constant.js";
 import imageCompression from "browser-image-compression";
 import Loading from "../Loading/index";
 import Popup from "../Popup/index.js";
+import CropImage from "../CropImage/index";
 
 const fileSize = 10242880;
 const address = constant.ENDPOINT;
@@ -30,12 +31,18 @@ class ManagerMain extends Component {
       loading: false,
       modalIsOpen: false,
       modalMsg: "",
+      modalOpened: false,
+      imageToCrop: "",
+      indexToCrop: 0,
+      stateToCrop: "",
     };
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
     this.submitItem = this.submitItem.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
     this.removeImage = this.removeImage.bind(this);
+    this.openCropModal = this.openCropModal.bind(this);
+    this.updatePictures = this.updatePictures.bind(this);
   }
 
   async componentDidMount() {
@@ -55,25 +62,12 @@ class ManagerMain extends Component {
 
   async onDrop(picture, _state, url, index) {
     await this.setState({ loading: true });
-    let newImg = "";
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1024,
-      useWebWorker: true,
-    };
     const prevImage = this.state[`${_state}_temp`][index];
+    // try {
+    //   const compressedFile = await imageCompression(picture[0], options);
     try {
-      const compressedFile = await imageCompression(picture[0], options);
-      try {
-        newImg = await imageCompression.getDataUrlFromFile(compressedFile);
-        this.state[_state].splice(index, 1, newImg);
-      } catch (error) {
-        this.state[_state].splice(
-          index,
-          1,
-          prevImage[0] === "NoImage.png" ? "" : prevImage
-        );
-      }
+      // newImg = await imageCompression.getDataUrlFromFile(compressedFile);
+      await this.openCropModal(url[0], index, _state);
     } catch (error) {
       this.state[_state].splice(
         index,
@@ -81,11 +75,32 @@ class ManagerMain extends Component {
         prevImage[0] === "NoImage.png" ? "" : prevImage
       );
     }
+    // } catch (error) {
+    //   this.state[_state].splice(
+    //     index,
+    //     1,
+    //     prevImage[0] === "NoImage.png" ? "" : prevImage
+    //   );
+    // }
+    await this.setState({ loading: false });
+  }
+
+  async updatePictures(newImage) {
+    let newImg = "";
+    const options = {
+      maxSizeMB: 2,
+      maxWidthOrHeight: 1024,
+      useWebWorker: true,
+    };
+    // const compressedFile = await imageCompression(newImage, options);
+    // newImg = await imageCompression.getDataUrlFromFile(compressedFile);
+    this.state[this.state.stateToCrop].splice(
+      this.state.indexToCrop,
+      1,
+      newImage
+    );
     await this.setState({ preview: false });
-    this.setState({
-      preview: true,
-      loading: false,
-    });
+    this.setState({ preview: true });
     console.log(this.state);
   }
 
@@ -238,6 +253,41 @@ class ManagerMain extends Component {
     this.setState({ modalIsOpen: false });
   }
 
+  closeCropModal() {
+    this.setState({ modalOpened: false });
+    document.body.classList.remove("modal-opened");
+    document.body.style.marginRight = 0;
+  }
+
+  getCropModal() {
+    if (this.state.modalOpened) {
+      return (
+        <CropImage
+          openClass="open"
+          close={this.closeCropModal.bind(this)}
+          image={this.state.imageToCrop}
+          updatePictures={this.updatePictures}
+        />
+      );
+    } else {
+      return;
+    }
+  }
+
+  async openCropModal(image, index, _state) {
+    console.log("aaaa", image, index);
+    const scrollBar = document.querySelector(".scrollbar-measure");
+    const scrollBarWidth = scrollBar.offsetWidth - scrollBar.clientWidth;
+    document.body.classList.add("modal-opened");
+    document.body.style.marginRight = `${scrollBarWidth}px`;
+    await this.setState({
+      modalOpened: true,
+      imageToCrop: image,
+      indexToCrop: index,
+      stateToCrop: _state,
+    });
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -250,6 +300,7 @@ class ManagerMain extends Component {
         />
         <Loading display={this.state.loading} />
         <div className="AdminMain">
+          {this.getCropModal()}
           <h1 className="AdminHeader">Change Main Menu Text and Image</h1>
           <div>
             <p className="imgUploaderTitle">Carousel Settings</p>

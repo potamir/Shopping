@@ -151,10 +151,4 @@ class AddItemPage extends Component {
     );
   }
 }
-
-AddItemPage.propTypes = {
-  close: PropTypes.func,
-  openClass: PropTypes.string,
-};
-
 export default withRouter(AddItemPage);

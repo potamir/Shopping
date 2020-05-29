@@ -18,15 +18,11 @@ class Footer extends Component {
     }
   }
   render() {
-    const r = /\W+(?=[A-Z][a-z])/g,
-      s = this.state.data.contact_text;
-    let t = s ? s.replace(r, "\n") : "none";
-    t = t.split("\n");
     return (
       <footer className="footer">
         <div className="footerChildDiv">
           <h3 className="footerTitle">Contact</h3>
-          {t.map((value, index) => {
+          {this.state.data.contact_text.split(";").map((value, index) => {
             return (
               <p key={index} className="footerContent">
                 {value}
@@ -36,15 +32,23 @@ class Footer extends Component {
         </div>
         <div className="footerChildDiv">
           <h3 className="footerTitle">About Us</h3>
-          <p className="footerContent">
-            {this.state.data ? this.state.data.about_text : "none"}
-          </p>
+          {this.state.data.about_text.split(";").map((value, index) => {
+            return (
+              <p key={index} className="footerContent">
+                {value}
+              </p>
+            );
+          })}
         </div>
         <div className="footerChildDiv">
           <h3 className="footerTitle">Help</h3>
-          <p className="footerContent">
-            {this.state.data ? this.state.data.help_text : "none"}
-          </p>
+          {this.state.data.help_text.split(";").map((value, index) => {
+            return (
+              <p key={index} className="footerContent">
+                {value}
+              </p>
+            );
+          })}
         </div>
       </footer>
     );

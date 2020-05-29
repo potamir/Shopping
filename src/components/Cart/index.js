@@ -120,6 +120,7 @@ class Cart extends Component {
     })
       .then((response) => response.json())
       .then(async (responseJson) => {
+        console.log(responseJson);
         if (responseJson.status) {
           await this.setState({
             shippingCost: responseJson.result.rajaongkir.results[0].costs,
