@@ -86,21 +86,26 @@ class ManagerMain extends Component {
   }
 
   async updatePictures(newImage) {
-    let newImg = "";
     const options = {
       maxSizeMB: 2,
       maxWidthOrHeight: 1024,
       useWebWorker: true,
     };
-    // const compressedFile = await imageCompression(newImage, options);
-    // newImg = await imageCompression.getDataUrlFromFile(compressedFile);
-    this.state[this.state.stateToCrop].splice(
-      this.state.indexToCrop,
-      1,
-      newImage
-    );
+    await fetch(newImage)
+      .then((res) => res.blob())
+      .then(async (result) => {
+        let newImg = "";
+        const compressedFile = await imageCompression(result, options);
+        newImg = await imageCompression.getDataUrlFromFile(compressedFile);
+        this.state[this.state.stateToCrop].splice(
+          this.state.indexToCrop,
+          1,
+          newImg
+        );
+      });
     await this.setState({ preview: false });
     this.setState({ preview: true });
+    this.closeCropModal();
     console.log(this.state);
   }
 
@@ -275,7 +280,6 @@ class ManagerMain extends Component {
   }
 
   async openCropModal(image, index, _state) {
-    console.log("aaaa", image, index);
     const scrollBar = document.querySelector(".scrollbar-measure");
     const scrollBarWidth = scrollBar.offsetWidth - scrollBar.clientWidth;
     document.body.classList.add("modal-opened");
