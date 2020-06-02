@@ -65,6 +65,7 @@ class History extends Component {
     })
       .then((response) => response.json())
       .then(async (responseJson) => {
+        console.log(responseJson);
         this.setState({ data: responseJson, loading: false });
       });
   }
@@ -203,189 +204,204 @@ class History extends Component {
             </div>
           )}
           <React.Fragment>
-            {this.state.data.map((value, index) => {
-              open.push(false);
-              if (!this.state.openSet && index === this.state.data.length - 1) {
-                this.setState({ open: open, openSet: true });
-              }
-              const detailsItem = JSON.parse(value.items_oncart);
-              return (
-                <div key={index}>
-                  <div
-                    className={`itemEa ${
-                      index % 2 == 0 ? "itemEaHistCont" : null
-                    }`}
-                  >
-                    <div className="leftDesc">
-                      <div className="cImgDiv paymentExp">
-                        <div className="paymentDetailsExp">
-                          <h3 className="detailsAlignLeft">Count</h3>
-                          <p className="detailsAlignLeft">Status</p>
-                          <p className="detailsAlignLeft">Type</p>
-                        </div>
-                      </div>
-                      <div className="paymentEaOncart">
-                        <div className="paymentDetails">
-                          <h3 className="paymentItemDetails">
-                            {detailsItem.length} item
-                            {detailsItem.length > 1 ? "s" : null}
-                          </h3>
-                          <p className="paymentItemDetails">
-                            {value.payment_status}
-                          </p>
-                          <p className="paymentItemDetails">
-                            {value.payment_type}
-                          </p>
-                        </div>
-                        <div className="paymentOnCart">
-                          <CurrencyFormat
-                            value={value.total_payment}
-                            displayType={"text"}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            prefix={"Total: Rp."}
-                            suffix={",-"}
-                            renderText={(curr_value) => (
-                              <p className="itemsOnCartDetPrice">
-                                {curr_value}
-                              </p>
-                            )}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="buttonDiv">
-                      {value.payment_status === "Waiting Payment" ? (
-                        <button
-                          onClick={() =>
-                            this.setState({
-                              modalIsOpen: true,
-                              modalMsg: "Send payment receipt to confirm!",
-                              status: value.payment_id,
-                              currRow: index,
-                              popupType: "imgsbm",
-                            })
-                          }
-                          className="normalBtn adminManBtn approveBtn"
-                        >
-                          Confirm
-                        </button>
-                      ) : value.payment_status === "Items Paid" ? (
-                        <button className="normalBtn adminManBtn waitBtn">
-                          Waiting Approval
-                        </button>
-                      ) : value.payment_status === "Approved" ? (
-                        <button className="normalBtn adminManBtn waitBtn">
-                          Approved
-                        </button>
-                      ) : value.payment_status === "On Process" ? (
-                        <button className="normalBtn adminManBtn approveBtn">
-                          In Hand
-                        </button>
-                      ) : null}
-                      <button
-                        onClick={() =>
-                          this.checkDetails(
-                            value.payment_status,
-                            value.total_payment,
-                            value.payment_id,
-                            index
-                          )
-                        }
-                        className="normalBtn adminManBtn detailsBtn"
+            {this.state.data
+              ? this.state.data.map((value, index) => {
+                  open.push(false);
+                  if (
+                    !this.state.openSet &&
+                    index === this.state.data.length - 1
+                  ) {
+                    this.setState({ open: open, openSet: true });
+                  }
+                  console.log(value.items_oncart.replace());
+                  const detailsItem = JSON.parse(
+                    value.items_oncart.replace(/(\r\n|\n|\r)/gm, "")
+                  );
+                  console.log(detailsItem);
+                  // const detailsItem = value.items_oncart.replace(/"/g, "'");
+                  // console.log(detailsItem.replace(/(\r\n|\n|\r)/gm, ""));
+                  return (
+                    <div key={index}>
+                      <div
+                        className={`itemEa ${
+                          index % 2 == 0 ? "itemEaHistCont" : null
+                        }`}
                       >
-                        Details
-                      </button>
-                      {value.payment_status === "Waiting Payment" ? (
-                        <button
-                          className="normalBtn adminManBtn deleteBtn"
-                          onClick={() =>
-                            this.setState({
-                              modalIsOpen: true,
-                              modalMsg:
-                                "Are you sure want to cancel this product(s)?",
-                              status: value.payment_id,
-                              popupType: "choice",
-                            })
-                          }
-                        >
-                          Cancel
-                        </button>
-                      ) : null}
-                    </div>
-                  </div>
-                  <div
-                    className={`itemEaOpen ${
-                      index % 2 == 0 ? "itemEaOpenEven" : null
-                    }`}
-                    onClick={() => {
-                      this.state.open.splice(index, 1, !this.state.open[index]);
-                      this.forceUpdate();
-                    }}
-                  >
-                    <p className="itemEaFont">{`CLICK TO ${
-                      this.state.open[index] ? "CLOSE" : "EXPAND"
-                    }`}</p>
-                  </div>
-                  {this.state.open[index] ? (
-                    <div className="itemEaHistWra">
-                      {detailsItem.map((eaVal, eaIndex) => {
-                        const total = eaVal.price * parseInt(eaVal.onCart);
-                        return (
-                          <div key={eaIndex} className="itemEaHist">
-                            <div className="leftDesc">
-                              <div className="cImgDiv">
-                                <img
-                                  src={`${imgsrc}${eaVal.img}`}
-                                  className="cartIcon"
-                                />
-                              </div>
-                              <div className="itemEaOnCart">
-                                <div>
-                                  <h3>{eaVal.name}</h3>
-                                </div>
-                                <div className="itemsOnCart">
-                                  <p className="itemsOnCartDet">
-                                    {eaVal.onCart} Item
-                                    {eaVal.onCart > 1 ? "s" : null}
-                                  </p>
-                                  <CurrencyFormat
-                                    value={eaVal.price}
-                                    displayType={"text"}
-                                    thousandSeparator="."
-                                    decimalSeparator=","
-                                    prefix={"Price: Rp."}
-                                    suffix={",-"}
-                                    renderText={(curr_value) => (
-                                      <p className="itemsOnCartDetPrice">
-                                        {curr_value}
-                                      </p>
-                                    )}
-                                  />
-                                  <CurrencyFormat
-                                    value={total}
-                                    displayType={"text"}
-                                    thousandSeparator="."
-                                    decimalSeparator=","
-                                    prefix={"Total: Rp."}
-                                    suffix={",-"}
-                                    renderText={(curr_value) => (
-                                      <p className="itemsOnCartDetPrice">
-                                        {curr_value}
-                                      </p>
-                                    )}
-                                  />
-                                </div>
-                              </div>
+                        <div className="leftDesc">
+                          <div className="cImgDiv paymentExp">
+                            <div className="paymentDetailsExp">
+                              <h3 className="detailsAlignLeft">Count</h3>
+                              <p className="detailsAlignLeft">Status</p>
+                              <p className="detailsAlignLeft">Type</p>
                             </div>
                           </div>
-                        );
-                      })}
+                          <div className="paymentEaOncart">
+                            <div className="paymentDetails">
+                              <h3 className="paymentItemDetails">
+                                {detailsItem.length} item
+                                {detailsItem.length > 1 ? "s" : null}
+                              </h3>
+                              <p className="paymentItemDetails">
+                                {value.payment_status}
+                              </p>
+                              <p className="paymentItemDetails">
+                                {value.payment_type}
+                              </p>
+                            </div>
+                            <div className="paymentOnCart">
+                              <CurrencyFormat
+                                value={value.total_payment}
+                                displayType={"text"}
+                                thousandSeparator="."
+                                decimalSeparator=","
+                                prefix={"Total: Rp."}
+                                suffix={",-"}
+                                renderText={(curr_value) => (
+                                  <p className="itemsOnCartDetPrice">
+                                    {curr_value}
+                                  </p>
+                                )}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="buttonDiv">
+                          {value.payment_status === "Waiting Payment" ? (
+                            <button
+                              onClick={() =>
+                                this.setState({
+                                  modalIsOpen: true,
+                                  modalMsg: "Send payment receipt to confirm!",
+                                  status: value.payment_id,
+                                  currRow: index,
+                                  popupType: "imgsbm",
+                                })
+                              }
+                              className="normalBtn adminManBtn approveBtn"
+                            >
+                              Confirm
+                            </button>
+                          ) : value.payment_status === "Items Paid" ? (
+                            <button className="normalBtn adminManBtn waitBtn">
+                              Waiting Approval
+                            </button>
+                          ) : value.payment_status === "Approved" ? (
+                            <button className="normalBtn adminManBtn waitBtn">
+                              Approved
+                            </button>
+                          ) : value.payment_status === "On Process" ? (
+                            <button className="normalBtn adminManBtn approveBtn">
+                              In Hand
+                            </button>
+                          ) : null}
+                          <button
+                            onClick={() =>
+                              this.checkDetails(
+                                value.payment_status,
+                                value.total_payment,
+                                value.payment_id,
+                                index
+                              )
+                            }
+                            className="normalBtn adminManBtn detailsBtn"
+                          >
+                            Details
+                          </button>
+                          {value.payment_status === "Waiting Payment" ? (
+                            <button
+                              className="normalBtn adminManBtn deleteBtn"
+                              onClick={() =>
+                                this.setState({
+                                  modalIsOpen: true,
+                                  modalMsg:
+                                    "Are you sure want to cancel this product(s)?",
+                                  status: value.payment_id,
+                                  popupType: "choice",
+                                })
+                              }
+                            >
+                              Cancel
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                      <div
+                        className={`itemEaOpen ${
+                          index % 2 == 0 ? "itemEaOpenEven" : null
+                        }`}
+                        onClick={() => {
+                          this.state.open.splice(
+                            index,
+                            1,
+                            !this.state.open[index]
+                          );
+                          this.forceUpdate();
+                        }}
+                      >
+                        <p className="itemEaFont">{`CLICK TO ${
+                          this.state.open[index] ? "CLOSE" : "EXPAND"
+                        }`}</p>
+                      </div>
+                      {this.state.open[index] ? (
+                        <div className="itemEaHistWra">
+                          {detailsItem.map((eaVal, eaIndex) => {
+                            const total = eaVal.price * parseInt(eaVal.onCart);
+                            return (
+                              <div key={eaIndex} className="itemEaHist">
+                                <div className="leftDesc">
+                                  <div className="cImgDiv">
+                                    <img
+                                      src={`${imgsrc}${eaVal.img}`}
+                                      className="cartIcon"
+                                    />
+                                  </div>
+                                  <div className="itemEaOnCart">
+                                    <div>
+                                      <h3>{eaVal.name}</h3>
+                                    </div>
+                                    <div className="itemsOnCart">
+                                      <p className="itemsOnCartDet">
+                                        {eaVal.onCart} Item
+                                        {eaVal.onCart > 1 ? "s" : null}
+                                      </p>
+                                      <CurrencyFormat
+                                        value={eaVal.price}
+                                        displayType={"text"}
+                                        thousandSeparator="."
+                                        decimalSeparator=","
+                                        prefix={"Price: Rp."}
+                                        suffix={",-"}
+                                        renderText={(curr_value) => (
+                                          <p className="itemsOnCartDetPrice">
+                                            {curr_value}
+                                          </p>
+                                        )}
+                                      />
+                                      <CurrencyFormat
+                                        value={total}
+                                        displayType={"text"}
+                                        thousandSeparator="."
+                                        decimalSeparator=","
+                                        prefix={"Total: Rp."}
+                                        suffix={",-"}
+                                        renderText={(curr_value) => (
+                                          <p className="itemsOnCartDetPrice">
+                                            {curr_value}
+                                          </p>
+                                        )}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : null}
                     </div>
-                  ) : null}
-                </div>
-              );
-            })}
+                  );
+                })
+              : null}
           </React.Fragment>
         </div>
       </div>

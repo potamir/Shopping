@@ -30,38 +30,41 @@ class ItemCarousel extends Component {
   render() {
     const _props = this.props;
     return (
-      <Carousel
-        heigth={"200px"}
-        infiniteLoop
-        autoPlay
-        showThumbs={false}
-        interval={5000}
-        className="caro"
-      >
-        {_props.data.map((value, index) => {
-          return (
-            <div
-              key={index}
-              className={"img_div"}
-              onClick={() => {
-                this.props.history.push({
-                  pathname: "/TagsItemPage",
-                  state: {
-                    tag: value.carousel_text,
-                    title: `title${index + 1}_carousel`,
-                  },
-                });
-              }}
-            >
-              <img
-                className={"item_caro"}
-                src={`${imgsrc}${value.carousel_img}`}
-              />
-              {/*<p className="legend">{value.carousel_text}</p> */}
-            </div>
-          );
-        })}
-      </Carousel>
+      <div className="caroWrapper">
+        <Carousel
+          heigth={"200px"}
+          width={"1000px"}
+          infiniteLoop
+          autoPlay
+          showThumbs={false}
+          interval={5000}
+          className="caro"
+        >
+          {_props.data.map((value, index) => {
+            return (
+              <div
+                key={index}
+                className={"img_div"}
+                onClick={() => {
+                  this.props.history.push({
+                    pathname: "/TagsItemPage",
+                    state: {
+                      tag: value.carousel_text,
+                      title: `title${index + 1}_carousel`,
+                    },
+                  });
+                }}
+              >
+                <img
+                  className={"item_caro"}
+                  src={`${imgsrc}${value.carousel_img}`}
+                />
+                {/*<p className="legend">{value.carousel_text}</p> */}
+              </div>
+            );
+          })}
+        </Carousel>
+      </div>
     );
   }
 }
