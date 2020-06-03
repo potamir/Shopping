@@ -32,7 +32,7 @@ class ItemCarousel extends Component {
     return (
       <div className="caroWrapper">
         <Carousel
-          heigth={"200px"}
+          heigth={"500px"}
           width={"1000px"}
           infiniteLoop
           autoPlay

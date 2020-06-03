@@ -35,6 +35,7 @@ class ManagerMain extends Component {
       imageToCrop: "",
       indexToCrop: 0,
       stateToCrop: "",
+      ratio: 1 / 1,
     };
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
     this.submitItem = this.submitItem.bind(this);
@@ -63,12 +64,14 @@ class ManagerMain extends Component {
   async onDrop(picture, _state, url, index) {
     await this.setState({ loading: true });
     const prevImage = this.state[`${_state}_temp`][index];
+    let ratioTemp = 1 / 1;
+    if (_state === "carousel_imgs") ratioTemp = 2 / 1;
     // try {
     //   const compressedFile = await imageCompression(picture[0], options);
-    try {
+    if (url[0]) {
       // newImg = await imageCompression.getDataUrlFromFile(compressedFile);
-      await this.openCropModal(url[0], index, _state);
-    } catch (error) {
+      await this.openCropModal(url[0], index, _state, ratioTemp);
+    } else {
       this.state[_state].splice(
         index,
         1,
@@ -272,6 +275,7 @@ class ManagerMain extends Component {
           close={this.closeCropModal.bind(this)}
           image={this.state.imageToCrop}
           updatePictures={this.updatePictures}
+          ratio={this.state.ratio}
         />
       );
     } else {
@@ -279,7 +283,7 @@ class ManagerMain extends Component {
     }
   }
 
-  async openCropModal(image, index, _state) {
+  async openCropModal(image, index, _state, ratio) {
     const scrollBar = document.querySelector(".scrollbar-measure");
     const scrollBarWidth = scrollBar.offsetWidth - scrollBar.clientWidth;
     document.body.classList.add("modal-opened");
@@ -289,6 +293,7 @@ class ManagerMain extends Component {
       imageToCrop: image,
       indexToCrop: index,
       stateToCrop: _state,
+      ratio: ratio,
     });
   }
 
@@ -343,25 +348,33 @@ class ManagerMain extends Component {
               </div>
             </div>
             <div className="imgUploaderGroup">
-              <img
-                src={`${imgsrc}${this.state.carousel_imgs_temp[0]}`}
-                className="imgUploader"
-              />
-              <img
-                src={`${imgsrc}${this.state.carousel_imgs_temp[1]}`}
-                onClick={() => this.removeImage(1)}
-                className="imgUploader removeImage"
-              />
-              <img
-                src={`${imgsrc}${this.state.carousel_imgs_temp[2]}`}
-                onClick={() => this.removeImage(2)}
-                className="imgUploader removeImage"
-              />
-              <img
-                src={`${imgsrc}${this.state.carousel_imgs_temp[3]}`}
-                onClick={() => this.removeImage(3)}
-                className="imgUploader removeImage"
-              />
+              <div className="imgUploader">
+                <img
+                  src={`${imgsrc}${this.state.carousel_imgs_temp[0]}`}
+                  className="imgUploaderPic"
+                />
+              </div>
+              <div className="imgUploader removeImage">
+                <img
+                  src={`${imgsrc}${this.state.carousel_imgs_temp[1]}`}
+                  onClick={() => this.removeImage(1)}
+                  className="imgUploaderPic"
+                />
+              </div>
+              <div className="imgUploader removeImage">
+                <img
+                  src={`${imgsrc}${this.state.carousel_imgs_temp[2]}`}
+                  onClick={() => this.removeImage(2)}
+                  className="imgUploaderPic"
+                />
+              </div>
+              <div className="imgUploader removeImage">
+                <img
+                  src={`${imgsrc}${this.state.carousel_imgs_temp[3]}`}
+                  onClick={() => this.removeImage(3)}
+                  className="imgUploaderPic"
+                />
+              </div>
             </div>
             <div className="imgUploaderGroup">
               <ImageUploader
