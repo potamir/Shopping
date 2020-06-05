@@ -14,7 +14,7 @@ class CropImage extends Component {
       crop: {
         unit: "%",
         width: 30,
-        aspect: 1 / 1,
+        aspect: this.props.ratio,
       },
     };
     this.close = this.close.bind(this);
@@ -111,7 +111,7 @@ class CropImage extends Component {
       >
         <div className="hider" />
         <div className="modal">
-          <div className={'image-crop'}>
+          <div className={"image-crop"}>
             <ReactCrop
               src={_props.image}
               crop={crop}

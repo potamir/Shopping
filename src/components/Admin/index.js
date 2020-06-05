@@ -7,6 +7,7 @@ import * as constant from "../constant.js";
 import imageCompression from "browser-image-compression";
 import Loading from "../Loading/index";
 import Popup from "../Popup/index.js";
+import CropImage from "../CropImage/index";
 
 const fileSize = 10242880;
 const address = constant.ENDPOINT;
@@ -32,6 +33,10 @@ class AdminMan extends Component {
       loading: false,
       modalIsOpen: false,
       modalMsg: "",
+      imageToCrop: "",
+      indexToCrop: 0,
+      stateToCrop: "",
+      ratio: 3 / 4,
     };
     this.onDrop = this.onDrop.bind(this);
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
@@ -39,6 +44,8 @@ class AdminMan extends Component {
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
     this.removeImage = this.removeImage.bind(this);
+    this.openCropModal = this.openCropModal.bind(this);
+    this.updatePictures = this.updatePictures.bind(this);
   }
 
   async componentDidMount() {
@@ -83,41 +90,53 @@ class AdminMan extends Component {
   }
 
   async onDrop(picture, url, index) {
-    let newImg = "";
-    const _state = this.state;
-    const options = {
-      maxSizeMB: 0.05,
-      maxWidthOrHeight: 640,
-      useWebWorker: true,
-    };
-    const prevImage = _state.pictures_temp[index];
-    try {
-      const compressedFile = await imageCompression(picture[0], options);
-      try {
-        newImg = await imageCompression.getDataUrlFromFile(compressedFile);
-        _state.pictures.splice(index, 1, newImg);
-      } catch (error) {
-        if (_state.status === "edit")
-          _state.pictures.splice(
-            index,
-            1,
-            prevImage === "NoImage.png" ? "" : prevImage
-          );
-        else _state.pictures.splice(index, 1, "");
-      }
-    } catch (error) {
-      if (_state.status === "edit")
-        _state.pictures.splice(
+    await this.setState({ loading: true });
+    const prevImage = this.state.pictures_temp[index];
+    // try {
+    //   const compressedFile = await imageCompression(picture[0], options);
+    if (url[0]) {
+      // newImg = await imageCompression.getDataUrlFromFile(compressedFile);
+      await this.openCropModal(url[0], index, "pictures", this.state.ratio);
+    } else {
+      if (this.state.status === "edit")
+        this.state.pictures.splice(
           index,
           1,
           prevImage === "NoImage.png" ? "" : prevImage
         );
-      else _state.pictures.splice(index, 1, "");
+      else this.state.pictures.splice(index, 1, "");
     }
+    // } catch (error) {
+    //   this.state[_state].splice(
+    //     index,
+    //     1,
+    //     prevImage[0] === "NoImage.png" ? "" : prevImage
+    //   );
+    // }
+    this.setState({ loading: false });
+  }
+
+  async updatePictures(newImage) {
+    const options = {
+      maxSizeMB: 2,
+      maxWidthOrHeight: 1024,
+      useWebWorker: true,
+    };
+    await fetch(newImage)
+      .then((res) => res.blob())
+      .then(async (result) => {
+        let newImg = "";
+        const compressedFile = await imageCompression(result, options);
+        newImg = await imageCompression.getDataUrlFromFile(compressedFile);
+        this.state[this.state.stateToCrop].splice(
+          this.state.indexToCrop,
+          1,
+          newImg
+        );
+      });
     await this.setState({ preview: false });
-    this.setState({
-      preview: true,
-    });
+    this.setState({ preview: true });
+    this.closeCropModal();
     console.log(this.state);
   }
 
@@ -208,6 +227,42 @@ class AdminMan extends Component {
     this.setState({ modalIsOpen: false });
   }
 
+  closeCropModal() {
+    this.setState({ modalOpened: false });
+    document.body.classList.remove("modal-opened");
+    document.body.style.marginRight = 0;
+  }
+
+  getCropModal() {
+    if (this.state.modalOpened) {
+      return (
+        <CropImage
+          openClass="open"
+          close={this.closeCropModal.bind(this)}
+          image={this.state.imageToCrop}
+          updatePictures={this.updatePictures}
+          ratio={this.state.ratio}
+        />
+      );
+    } else {
+      return;
+    }
+  }
+
+  async openCropModal(image, index, _state, ratio) {
+    const scrollBar = document.querySelector(".scrollbar-measure");
+    const scrollBarWidth = scrollBar.offsetWidth - scrollBar.clientWidth;
+    document.body.classList.add("modal-opened");
+    document.body.style.marginRight = `${scrollBarWidth}px`;
+    await this.setState({
+      modalOpened: true,
+      imageToCrop: image,
+      indexToCrop: index,
+      stateToCrop: _state,
+      ratio: ratio,
+    });
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -220,6 +275,7 @@ class AdminMan extends Component {
         />
         <Loading display={this.state.loading} />
         <div className="AdminMain">
+          {this.getCropModal()}
           <h1 className="AdminHeader">ADD NEW ITEM</h1>
           <div className="NameField">
             <div className="Name">
@@ -258,26 +314,34 @@ class AdminMan extends Component {
           </div>
           {this.state.status === "edit" ? (
             <div className="imgUploaderGroup">
-              <img
-                src={`${imgsrc}${this.state.pictures_temp[0]}`}
-                onClick={() => this.removeImage(0)}
-                className="imgUploader"
-              />
-              <img
-                src={`${imgsrc}${this.state.pictures_temp[1]}`}
-                onClick={() => this.removeImage(1)}
-                className="imgUploader removeImage"
-              />
-              <img
-                src={`${imgsrc}${this.state.pictures_temp[2]}`}
-                onClick={() => this.removeImage(2)}
-                className="imgUploader removeImage"
-              />
-              <img
-                src={`${imgsrc}${this.state.pictures_temp[3]}`}
-                onClick={() => this.removeImage(3)}
-                className="imgUploader removeImage"
-              />
+              <div className="imgUploader">
+                <img
+                  src={`${imgsrc}${this.state.pictures_temp[0]}`}
+                  onClick={() => this.removeImage(0)}
+                  className="admImg"
+                />
+              </div>
+              <div className="imgUploader">
+                <img
+                  src={`${imgsrc}${this.state.pictures_temp[1]}`}
+                  onClick={() => this.removeImage(1)}
+                  className="admImg"
+                />
+              </div>
+              <div className="imgUploader removeImage">
+                <img
+                  src={`${imgsrc}${this.state.pictures_temp[2]}`}
+                  onClick={() => this.removeImage(2)}
+                  className="admImg"
+                />
+              </div>
+              <div className="imgUploader removeImage">
+                <img
+                  src={`${imgsrc}${this.state.pictures_temp[3]}`}
+                  onClick={() => this.removeImage(3)}
+                  className="admImg"
+                />
+              </div>
             </div>
           ) : null}
           <div className="imgUploaderGroup">
