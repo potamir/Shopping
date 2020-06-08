@@ -25,7 +25,7 @@ class CropImage extends Component {
   }
 
   async componentDidMount() {
-    console.log(this.props);
+    console.log(this.props.image);
     setTimeout(() => {
       this.modalWrapper.classList.add(this.props.openClass);
     }, 50);
@@ -110,8 +110,8 @@ class CropImage extends Component {
         }}
       >
         <div className="hider" />
-        <div className="modal">
-          <div className={"image-crop"}>
+        <div className="modal crop-modal">
+          <div className="image-crop">
             <ReactCrop
               src={_props.image}
               crop={crop}
@@ -121,20 +121,25 @@ class CropImage extends Component {
               onChange={this.onCropChange}
             />
           </div>
-          {croppedImageUrl && (
-            <img
-              alt="Crop"
-              style={{ maxWidth: "100%" }}
-              src={croppedImageUrl}
-            />
-          )}
-          <button
-            onClick={() => {
-              _props.updatePictures(croppedImageUrl);
-            }}
-          >
-            submit
-          </button>
+          <div className="image-crop">
+            {croppedImageUrl && (
+              <img
+                alt="Crop"
+                style={{ maxWidth: "100%" }}
+                src={croppedImageUrl}
+              />
+            )}
+          </div>
+          <div className="crop-btn-div">
+            <button
+              className="submitBtn normalBtn"
+              onClick={() => {
+                _props.updatePictures(croppedImageUrl);
+              }}
+            >
+              Crop!
+            </button>
+          </div>
         </div>
       </div>
     );

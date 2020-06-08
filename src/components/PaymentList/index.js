@@ -97,7 +97,7 @@ class PaymentList extends Component {
       this.setState({
         modalIsOpen: true,
         modalMsg: "Receipt Image",
-        image: this.state.data[index].payment_trc,
+        image: this.state.data[index].payment_trcs,
         popupType: "imgdis",
       });
     } else if (status === "On Process") {
@@ -147,7 +147,7 @@ class PaymentList extends Component {
             if (!this.state.openSet && index === this.state.data.length - 1) {
               this.setState({ open: open, openSet: true });
             }
-            const detailsItem = JSON.parse(value.items_oncart);
+            const detailsItem = JSON.parse(value.items_oncart.replace(/(\r\n|\n|\r)/gm, ""));
             return (
               <div key={index}>
                 <div

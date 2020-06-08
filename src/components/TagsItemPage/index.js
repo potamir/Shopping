@@ -30,7 +30,10 @@ class TagsItemPage extends Component {
     else {
       window.scrollTo(0, 0);
       document.querySelector(".menu").classList.remove("open");
-      if (_props.location.state.tag.toUpperCase() === "ALL")
+      if (
+        _props.location.state.tag.toUpperCase() === "ALL" ||
+        _props.location.state.tag === ""
+      )
         await this.getItemAll(0);
       else await this.getItem(0, _props.location.state.tag);
     }
