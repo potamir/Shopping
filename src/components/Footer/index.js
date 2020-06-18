@@ -18,49 +18,51 @@ class Footer extends Component {
     }
   }
   render() {
-    const isAvailable =
-      this.state.data.contact_text &&
-      this.state.data.about_text &&
-      this.state.data.help_text;
     return (
-      <footer className="footer">
-        <div className="footerChildDiv">
-          <h3 className="footerTitle">Contact</h3>
-          {isAvailable
-            ? this.state.data.contact_text.split(";").map((value, index) => {
-                return (
-                  <p key={index} className="footerContent">
-                    {value}
-                  </p>
-                );
-              })
-            : null}
-        </div>
-        <div className="footerChildDiv">
-          <h3 className="footerTitle">About Us</h3>
-          {isAvailable
-            ? this.state.data.about_text.split(";").map((value, index) => {
-                return (
-                  <p key={index} className="footerContent">
-                    {value}
-                  </p>
-                );
-              })
-            : null}
-        </div>
-        <div className="footerChildDiv">
-          <h3 className="footerTitle">Help</h3>
-          {isAvailable
-            ? this.state.data.help_text.split(";").map((value, index) => {
-                return (
-                  <p key={index} className="footerContent">
-                    {value}
-                  </p>
-                );
-              })
-            : null}
-        </div>
-      </footer>
+      <React.Fragment>
+        {this.state.data ? (
+          <footer className="footer">
+            <div className="footerChildDiv">
+              <h3 className="footerTitle">Contact</h3>
+              {this.state.data.contact_text
+                ? this.state.data.contact_text
+                    .split(";")
+                    .map((value, index) => {
+                      return (
+                        <p key={index} className="footerContent">
+                          {value}
+                        </p>
+                      );
+                    })
+                : null}
+            </div>
+            <div className="footerChildDiv">
+              <h3 className="footerTitle">About Us</h3>
+              {this.state.data.about_text
+                ? this.state.data.about_text.split(";").map((value, index) => {
+                    return (
+                      <p key={index} className="footerContent">
+                        {value}
+                      </p>
+                    );
+                  })
+                : null}
+            </div>
+            <div className="footerChildDiv">
+              <h3 className="footerTitle">Help</h3>
+              {this.state.data.help_text
+                ? this.state.data.help_text.split(";").map((value, index) => {
+                    return (
+                      <p key={index} className="footerContent">
+                        {value}
+                      </p>
+                    );
+                  })
+                : null}
+            </div>
+          </footer>
+        ) : null}
+      </React.Fragment>
     );
   }
 }

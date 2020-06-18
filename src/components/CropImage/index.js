@@ -109,7 +109,18 @@ class CropImage extends Component {
           this.modalWrapper = node;
         }}
       >
-        <div className="hider" />
+        <div className="hider">
+          <div className="crop-btn-div">
+            <button
+              className="cropBtn normalBtn"
+              onClick={() => {
+                _props.updatePictures(croppedImageUrl);
+              }}
+            >
+              Crop
+            </button>
+          </div>
+        </div>
         <div className="modal crop-modal">
           <div className="image-crop">
             <ReactCrop
@@ -120,25 +131,6 @@ class CropImage extends Component {
               onComplete={this.onCropComplete}
               onChange={this.onCropChange}
             />
-          </div>
-          <div className="image-crop">
-            {croppedImageUrl && (
-              <img
-                alt="Crop"
-                style={{ maxWidth: "100%" }}
-                src={croppedImageUrl}
-              />
-            )}
-          </div>
-          <div className="crop-btn-div">
-            <button
-              className="submitBtn normalBtn"
-              onClick={() => {
-                _props.updatePictures(croppedImageUrl);
-              }}
-            >
-              Crop!
-            </button>
           </div>
         </div>
       </div>

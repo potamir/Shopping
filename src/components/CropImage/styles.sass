@@ -1,7 +1,8 @@
 @import '../../styles/variables.sass'
 
 .image-crop
-  width: 100%
+  width: auto
+  height: auto
 
 .crop-modal
   display: flex
@@ -12,3 +13,20 @@
   display: flex
   align-items: center
   justify-content: center
+  position: absolute
+  bottom: 0px
+
+.cropBtn
+  font-size: 1.0rem
+  max-width: 900px
+  width: 90vw
+  margin-top: 20px
+  margin-bottom: 20px
+  margin-left: 1rem
+  margin-right: 1rem
+  background: $black
+  color: #fff
+  border: solid 2px
+  &:hover
+    background: #ddd
+    color: $black
