@@ -44,7 +44,8 @@ class AddItemPage extends Component {
   calculate(param) {
     if (param === "dec" && this.state.total > 0)
       this.setState({ total: this.state.total - 1 });
-    else if (param === "inc") this.setState({ total: this.state.total + 1 });
+    else if (param === "inc" && this.props.item.total > this.state.total)
+      this.setState({ total: this.state.total + 1 });
   }
 
   render() {

@@ -18,6 +18,10 @@ class ItemPage extends Component {
   componentDidMount() {
     window.scrollTo(0, 0);
     document.querySelector(".menu").classList.remove("open");
+    if (!this.props.location.state)
+      this.props.history.push({
+        pathname: "/",
+      });
   }
   closeModal() {
     this.setState({ modalOpened: false });
