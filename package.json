@@ -120,7 +120,7 @@
     "prompt": "1.0.0",
     "react-addons-test-utils": "15.4.1",
     "redux-immutable-state-invariant": "1.2.4",
-    "replace": "0.3.0",
+    "replace": "1.2.2",
     "rimraf": "2.5.4",
     "sass-loader": "4.1.0",
     "style-loader": "0.13.1",
